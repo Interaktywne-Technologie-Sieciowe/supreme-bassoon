@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BackendButtonTest from "@/components/BackendButtonTest.vue"
 defineProps<{
   msg: string
 }>()
@@ -11,6 +12,7 @@ defineProps<{
       You’ve successfully created a project with
       <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
+      <BackendButtonTest />
     </h3>
   </div>
 </template>
@@ -33,6 +35,7 @@ h3 {
 }
 
 @media (min-width: 1024px) {
+
   .greetings h1,
   .greetings h3 {
     text-align: left;
