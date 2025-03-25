@@ -160,9 +160,9 @@ aws ecr describe-repositories --query "repositories[*].repositoryUri" --output t
 
 ### 4. Create ECS Cluster & Services  
 
-You can create an **ECS cluster** manually via the AWS Console or automate it using **Terraform**.  
+You can create an **ECS cluster** manually via the AWS Console
 
-#### (A) Using AWS Console  
+#### Using AWS Console  
 
 1. **Create an ECS Cluster** (choose **Fargate**)  
 2. **Create Task Definitions** for `backend` and `frontend`:  
@@ -202,5 +202,3 @@ Whenever you update your code:
 - Go to **AWS ECS Console** → Services  
 - Check **Task Status**  
 - Access the app via **Load Balancer or Public IP**  
-
-🚀 **Your Vue 3 + Express.js app is now deployed on AWS ECS!** 🚀  
