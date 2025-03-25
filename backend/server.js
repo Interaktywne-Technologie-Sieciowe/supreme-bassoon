@@ -7,7 +7,9 @@ const PORT = 3000;
 
 // Default allowed origins
 const defaultOrigins = [
+    'http://localhost:5173/',
     'http://localhost:5137',
+    'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://frontend:80',
     'http://frontend:443',
