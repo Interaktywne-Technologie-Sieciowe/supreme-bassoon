@@ -53,8 +53,35 @@
   const email = ref('')
   const password = ref('')
   
-  const login = () => {
-    console.log('Logowanie:', email.value, password.value)
+  const login = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Błąd logowania: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    console.log('Sukces logowania:', data)
+
+    // np. przekierowanie albo zapis tokena
+    // localStorage.setItem('token', data.token)
+    // router.push('/dashboard')
+
+  } catch (error) {
+    console.error('Błąd podczas logowania:', error)
   }
+  
+}
+
   </script>
   
