@@ -54,18 +54,33 @@
   const password = ref('')
   
   const login = async () => {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password.value)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    })
 
-  const dane = {
-    email: email.value,
-    password: hashHex,
+    if (!response.ok) {
+      throw new Error(`Błąd logowania: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    console.log('Sukces logowania:', data)
+
+    // np. przekierowanie albo zapis tokena
+    // localStorage.setItem('token', data.token)
+    // router.push('/dashboard')
+
+  } catch (error) {
+    console.error('Błąd podczas logowania:', error)
   }
-
-  console.log('JSON:', JSON.stringify(dane))
+  
 }
 
   </script>
