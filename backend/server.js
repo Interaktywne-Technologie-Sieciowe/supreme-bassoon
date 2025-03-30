@@ -29,6 +29,26 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json()); 
+
+const users = [
+    { email: 'test@test.com', password: 'password123', token: 'fake-token' },
+];
+
+app.post('/api/login', (req, res) => {
+    console.log('Received credentials:', req.body);
+
+    const { email, password } = req.body;
+
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        res.json({ message: 'Login successful', token: user.token });
+    } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+    }
+});
+
 
 // Health Check Endpoint
 app.get('/', (req, res) => {
