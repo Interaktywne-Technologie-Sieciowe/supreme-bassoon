@@ -1,6 +1,7 @@
 CREATE TABLE USERS_ROLES (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) UNIQUE NOT NULL,
+    code VARCHAR(10) UNIQUE NOT NULL
 );
 
 CREATE TABLE USERS (
@@ -19,25 +20,30 @@ CREATE TABLE CONFERENCE (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    description TEXT
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    description TEXT,
+    last_update TIMESTAMP NOT NULL,
+    location VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE EVENTS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    conference_id UUID REFERENCES CONFERENCE(id)
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    conference_id UUID REFERENCES CONFERENCE(id),
+     location VARCHAR(255),
+      last_update TIMESTAMP NOT NULL
 );
 
 CREATE TABLE BOOKMARKS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP DEFAULT now(),
     event_id UUID REFERENCES EVENTS(id),
-    user_id UUID REFERENCES USERS(id)
+    user_id UUID REFERENCES USERS(id),
+     last_update TIMESTAMP NOT NULL
 );
 
 
@@ -46,13 +52,3 @@ CREATE TABLE USERS_CONFERENCE (
     conference_id UUID REFERENCES CONFERENCE(id),
     PRIMARY KEY (user_id, conference_id)
 );
-
-
-INSERT INTO USERS_ROLES (name) 
-VALUES ('guest');
-
-INSERT INTO USERS (name, surname, phone, email, password, role_id) 
-VALUES ('Jan', 'Kowalski', '123456789', 'jankowalski@mail.com', 'jkowalski',
-       (SELECT id FROM USERS_ROLES WHERE name = 'guest' LIMIT 1));
-       
-       
