@@ -19,6 +19,12 @@
     npm run dev
     ```  
 
+## Set up local database
+1. Run postgresql in docker
+    ```bash
+    docker-compose up -d
+    ```
+2. Install dependencies in the backend folded
 ---
 
 ## How to Create a New Project  
