@@ -15,6 +15,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/vue3": "^6.1.17",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/vite": "^4.0.16",
     "lucide-vue-next": "^0.484.0",
