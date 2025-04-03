@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const os = require('os');
-const { Pool } = require('pg'); // Import PostgreSQL client
+const { Pool } = require('pg');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
+app.use(express.json())
 const PORT = 3000;
 
 // CORS setup
@@ -30,7 +33,7 @@ app.use(cors(corsOptions));
 // PostgreSQL connection settings
 const pool = new Pool({
     user: 'myuser',
-    host: 'localhost',  // Change to 'postgres' if running in Docker Compose
+    host: 'localhost',  // Change to 'postgres' if you run this server in a docker container
     database: 'mydatabase',
     password: 'mypassword',
     port: 5432,
@@ -46,7 +49,6 @@ app.get('/', (req, res) => {
     });
 });
 
-// Sample API to Fetch Data from PostgreSQL
 app.get('/api/users', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM users');
@@ -54,6 +56,58 @@ app.get('/api/users', async (req, res) => {
     } catch (error) {
         console.error('Database query error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+const SECRET_KEY = "kluczjakklucz";
+app.post("/api/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    try {
+        // Fetch user from database
+        const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (result.rows.length === 0) {
+            return res.status(401).json({ error: "Invalid email or password" });
+        }
+
+        const user = result.rows[0];
+
+        // Compare provided password with stored hashed password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: "Invalid email or password" });
+        }
+
+        const token = jwt.sign(
+            { id: user.id, email: user.email, role_id: user.role_id },
+            SECRET_KEY,
+            { expiresIn: "1h" }
+        );
+
+        await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [user.id]);
+
+        // Return token and user info (excluding password)
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                surname: user.surname,
+                email: user.email,
+                phone: user.phone,
+                created_at: user.created_at,
+                last_login: new Date().toISOString(), // Approximate, as the DB update is async
+                role_id: user.role_id,
+            }
+        });
+
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
