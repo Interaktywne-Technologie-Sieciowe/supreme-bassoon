@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/users', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM users');
+        const result = await pool.query('SELECT u.*, r.name as role_name FROM users u join users_roles r on u.role_id = r.id');
         res.json(result.rows);
     } catch (error) {
         console.error('Database query error:', error);
@@ -81,9 +81,10 @@ app.post("/api/login", async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: "Invalid email or password" });
         }
+        const role = (await pool.query("select * from USERS_ROLES where id = $1", [user.role_id])).rows[0];
 
         const token = jwt.sign(
-            { id: user.id, email: user.email, role_id: user.role_id },
+            { id: user.id, email: user.email, role_code: role.code },
             SECRET_KEY,
             { expiresIn: "1h" }
         );
@@ -101,13 +102,33 @@ app.post("/api/login", async (req, res) => {
                 phone: user.phone,
                 created_at: user.created_at,
                 last_login: new Date().toISOString(), // Approximate, as the DB update is async
-                role_id: user.role_id,
+                role: role.name,
             }
         });
 
     } catch (error) {
         console.error("Login error:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.get("/api/stupid/endpoint", (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Missing or invalid Authorization header" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Extract the token
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY); // Verify and decode JWT
+        console.log("Decoded Token:", decoded); // Print to console
+
+        res.json({ message: "Token successfully decoded!", decoded });
+    } catch (error) {
+        console.error("JWT Verification Error:", error);
+        res.status(401).json({ error: "Invalid or expired token" });
     }
 });
 
