@@ -1,22 +1,28 @@
-const { query } = require('../config/database');
+const userModel = require('../models/userModel');
 
-const getAllUsers = async (req, res) => {
+// Reuse centralized error handler
+const handleErrors = (err, res) => {
+    console.error('Error:', err);
+
+    if (err.code) {
+        switch (err.code) {
+            case '22P02':
+                return res.status(400).json({ error: 'Invalid input format', details: err.detail });
+        }
+    }
+
+    return res.status(500).json({ error: 'Internal server error' });
+};
+
+exports.getAllUsers = async (req, res) => {
     try {
-        const result = await query(
-            'SELECT u.*, r.name as role_name FROM users u JOIN users_roles r ON u.role_id = r.id'
-        );
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Database query error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        const users = await userModel.findAll();
+        res.json(users);
+    } catch (err) {
+        handleErrors(err, res);
     }
 };
 
-const adminImport = (req, res) => {
+exports.adminImport = async (req, res) => {
     res.json({ msg: 'Import zakończony sukcesem' });
-};
-
-module.exports = {
-    getAllUsers,
-    adminImport
 };
