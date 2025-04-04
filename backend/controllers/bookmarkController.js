@@ -1,5 +1,5 @@
-const { v4: isUuid } = require('uuid');
 const bookmarkModel = require('../models/bookmarkModel');
+const { validate: isUuid } = require('uuid')
 
 // Shared error handler
 const handleErrors = (err, res) => {
