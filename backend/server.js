@@ -3,12 +3,13 @@ const cors = require('cors');
 const os = require('os');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const { generateTokenForUser } = require('./auth')
+const { requireAuth } = require('./middlewares/auth');
+const { requireMinRole } = require('./middlewares/roles')
 
 // Constants
 const PORT = 3000;
-const SECRET_KEY = 'kluczjakklucz';
 
 // Initialize Express app
 const app = express();
@@ -96,11 +97,7 @@ app.post('/api/login', async (req, res) => {
         const role = roleResult.rows[0];
 
         // Generate JWT token
-        const token = jwt.sign(
-            { id: user.id, email: user.email, role_code: role.code },
-            SECRET_KEY,
-            { expiresIn: '1h' }
-        );
+        const token = generateTokenForUser(user, role)
 
         // Update last login time
         await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
@@ -133,23 +130,12 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Authenticated endpoint (for testing)
-app.get('/api/stupid/endpoint', (req, res) => {
-    console.log('Cookies:', req.cookies);
-    const token = req.cookies.token;
+app.get('/api/bookmarks', requireAuth, requireMinRole('u'), (req, res) => {
+    res.json({ msg: 'Twoje ulubione eventy' });
+});
 
-    if (!token) {
-        return res.status(401).json({ error: 'Token missing' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        console.log('Decoded Token:', decoded);
-        res.json({ message: 'Token successfully decoded!', decoded });
-    } catch (error) {
-        console.error('JWT Verification Error:', error);
-        res.status(401).json({ error: 'Invalid or expired token' });
-    }
+app.post('/api/admin/import', requireAuth, requireMinRole('a'), (req, res) => {
+    res.json({ msg: 'Import zakończony sukcesem' });
 });
 
 // Start server
