@@ -23,3 +23,104 @@ INSERT INTO USERS (name, surname, phone, email, password, created_at, last_login
 ('Adam', 'Małysz', '533651471', 'adam.malysz@latam.bo.chce.pl', '$2b$10$anDa4/DY6IVn1B1TdeGQbOkOq708iJPOOj19pCh3orqtPY5RwDaqC', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 ('Sebastian', 'Sadowy', '420692137', 'seba@sadowy.com', '$2b$10$anDa4/DY6IVn1B1TdeGQbOkOq708iJPOOj19pCh3orqtPY5RwDaqC', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'a' LIMIT 1)),
 ;
+
+-- Insert a conference
+INSERT INTO CONFERENCE (
+    id,
+    name,
+    start_date,
+    end_date,
+    description,
+    last_update,
+    location
+) VALUES (
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'TechConnect Summit 2025',
+    '2025-06-15 09:00:00',
+    '2025-06-17 18:00:00',
+    'TechConnect Summit brings together industry leaders, innovators, and developers to explore emerging technologies and future trends in software development, AI, cloud computing, and cybersecurity.',
+    NOW(),
+    'Warsaw Tech Center, Warsaw, Poland'
+) RETURNING id;
+
+-- Insert events for the conference
+INSERT INTO EVENTS (
+    name,
+    start_date,
+    end_date,
+    conference_id,
+    location,
+    last_update
+) VALUES
+(
+    'Opening Keynote: The Future of Technology',
+    '2025-06-15 09:30:00',
+    '2025-06-15 11:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Main Auditorium',
+    NOW()
+),
+(
+    'Workshop: Building Scalable Microservices',
+    '2025-06-15 11:30:00',
+    '2025-06-15 13:30:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Workshop Room A',
+    NOW()
+),
+(
+    'Panel Discussion: AI Ethics and Responsibility',
+    '2025-06-15 14:00:00',
+    '2025-06-15 15:30:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Panel Room',
+    NOW()
+),
+(
+    'Technical Deep Dive: Modern JavaScript Frameworks',
+    '2025-06-16 09:00:00',
+    '2025-06-16 12:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Technical Room B',
+    NOW()
+),
+(
+    'Networking Lunch',
+    '2025-06-16 12:30:00',
+    '2025-06-16 14:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Dining Hall',
+    NOW()
+),
+(
+    'Workshop: Cloud Security Best Practices',
+    '2025-06-16 14:30:00',
+    '2025-06-16 17:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Workshop Room C',
+    NOW()
+),
+(
+    'Hackathon Kickoff',
+    '2025-06-16 19:00:00',
+    '2025-06-16 21:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Innovation Lab',
+    NOW()
+),
+(
+    'Career Fair',
+    '2025-06-17 09:00:00',
+    '2025-06-17 12:00:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Exhibition Hall',
+    NOW()
+),
+(
+    'Closing Keynote: Industry Trends and Predictions',
+    '2025-06-17 16:00:00',
+    '2025-06-17 17:30:00',
+    'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
+    'Main Auditorium',
+    NOW()
+);
