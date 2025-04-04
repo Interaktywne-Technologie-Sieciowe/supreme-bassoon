@@ -138,6 +138,40 @@ app.post('/api/admin/import', requireAuth, requireMinRole('a'), (req, res) => {
     res.json({ msg: 'Import zakończony sukcesem' });
 });
 
+app.get('/api/events', requireAuth, requireMinRole('g'), async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT e.*, c.name as conference_name
+            FROM events e
+            JOIN conference c ON e.conference_id = c.id
+            ORDER BY e.start_date
+        `);
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/events/favorites', requireAuth, requireMinRole('u'), async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const result = await pool.query(`
+            SELECT e.*, b.created_at as bookmarked_at
+            FROM bookmarks b
+            JOIN events e ON b.event_id = e.id
+            WHERE b.user_id = $1 AND b.is_active = true
+            ORDER BY e.start_date
+        `, [userId]);
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching favorite events:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
