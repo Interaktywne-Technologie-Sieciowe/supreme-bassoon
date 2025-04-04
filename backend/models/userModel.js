@@ -8,3 +8,17 @@ exports.findAll = async () => {
     `);
     return result.rows;
 };
+
+exports.findByEmail = async (email) => {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    return result.rows[0];
+};
+
+exports.getRoleById = async (roleId) => {
+    const result = await pool.query('SELECT * FROM users_roles WHERE id = $1', [roleId]);
+    return result.rows[0];
+};
+
+exports.updateLastLogin = async (userId) => {
+    await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userId]);
+};
