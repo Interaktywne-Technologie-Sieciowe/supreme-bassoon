@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { getBookmarks, addBookmark, removeBookmark } = require('../controllers/bookmarkController');
-const { requireAuth } = require('../middleware/auth');
-const { requireMinRole } = require('../middleware/roles');
+const { requireAuth } = require('../middlewares/auth');
+const { requireMinRole } = require('../middlewares/roles');
 
 router.get('/', requireAuth, requireMinRole('u'), getBookmarks);
 router.post('/:eventId', requireAuth, requireMinRole('u'), addBookmark);
