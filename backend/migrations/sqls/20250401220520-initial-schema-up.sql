@@ -45,7 +45,8 @@ CREATE TABLE BOOKMARKS (
     event_id UUID REFERENCES EVENTS(id),
     user_id UUID REFERENCES USERS(id),
     last_update TIMESTAMP NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE  -- no need to delete the record, just switch the flag
+    is_active BOOLEAN DEFAULT TRUE,  -- no need to delete the record, just switch the flag
+    CONSTRAINT unique_user_event UNIQUE (user_id, event_id)  -- Ensures unique bookmarks
 );
 
 
