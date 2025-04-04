@@ -1,77 +1,57 @@
-const { query } = require('../config/database');
 const { v4: isUuid } = require('uuid');
+const bookmarkModel = require('../models/bookmarkModel');
 
-const getBookmarks = async (req, res) => {
-    const userId = req.user.id;
+// Shared error handler
+const handleErrors = (err, res) => {
+    console.error('Error:', err);
 
+    if (err.code) {
+        switch (err.code) {
+            case '23503':
+                return res.status(400).json({ error: 'Referenced event does not exist', details: err.detail });
+            case '22P02':
+                return res.status(400).json({ error: 'Invalid UUID format', details: err.detail });
+        }
+    }
+
+    return res.status(500).json({ error: 'Internal server error' });
+};
+
+exports.getBookmarks = async (req, res) => {
     try {
-        const result = await query(`
-            SELECT b.created_at as bookmarked_at, e.*
-            FROM bookmarks b
-            JOIN events e ON b.event_id = e.id
-            WHERE b.user_id = $1 AND b.is_active = true
-            ORDER BY e.start_date
-        `, [userId]);
-
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error on fetching bookmarks from the database:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        const bookmarks = await bookmarkModel.findByUserId(req.user.id);
+        res.json(bookmarks);
+    } catch (err) {
+        handleErrors(err, res);
     }
 };
 
-const addBookmark = async (req, res) => {
-    const userId = req.user.id;
-    const eventId = req.params.eventId;
+exports.addBookmark = async (req, res) => {
+    const { eventId } = req.params;
 
-    // Validate UUID format
     if (!isUuid(eventId)) {
         return res.status(400).json({ error: 'Invalid event ID format' });
     }
 
     try {
-        await query(`
-            INSERT INTO bookmarks (user_id, event_id, created_at, last_update, is_active)
-            VALUES ($1, $2, NOW(), NOW(), TRUE)
-            ON CONFLICT (user_id, event_id) DO UPDATE
-            SET is_active = TRUE, last_update = NOW()
-        `, [userId, eventId]);
-
+        await bookmarkModel.add(req.user.id, eventId);
         res.status(201).json({ message: 'Event bookmarked successfully' });
-    } catch (error) {
-        if (error.code === '23503') {
-            return res.status(400).json({ error: 'Event does not exist' });
-        }
-
-        console.error('Error adding bookmark:', error);
-        res.status(500).json({ error: 'Internal server error' });
+    } catch (err) {
+        handleErrors(err, res);
     }
 };
 
-const removeBookmark = async (req, res) => {
-    const userId = req.user.id;
+exports.removeBookmark = async (req, res) => {
     const { eventId } = req.params;
 
     try {
-        const result = await query(`
-            UPDATE bookmarks
-            SET is_active = false, last_update = NOW()
-            WHERE user_id = $1 AND event_id = $2 AND is_active = true
-        `, [userId, eventId]);
-
-        if (result.rowCount === 0) {
+        const removed = await bookmarkModel.remove(req.user.id, eventId);
+        if (!removed) {
             return res.status(404).json({ error: 'Bookmark not found or already inactive' });
         }
 
-        res.json({ message: 'Bookmark deleted' });
-    } catch (error) {
-        console.error('Error deleting bookmark:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.json({ message: 'Bookmark deleted successfully' });
+    } catch (err) {
+        handleErrors(err, res);
     }
-};
-
-module.exports = {
-    getBookmarks,
-    addBookmark,
-    removeBookmark
 };
