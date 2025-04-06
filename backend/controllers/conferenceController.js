@@ -89,7 +89,7 @@ exports.importConference = async (req, res) => {
         const fileExt = path.extname(file.originalname).toLowerCase();
         if (fileExt !== '.json') {
             // Clean up invalid file
-            fs.unlinkSync(file.path);
+            await fs.promises.unlink(file.path)
             return res.status(400).json({ error: 'Only JSON files are allowed' });
         }
 
