@@ -63,7 +63,7 @@ exports.exportConference = async (req, res) => {
 
         const filename = `conference-${id}-${Date.now()}.json`;
         const filePath = path.join(__dirname, '..', 'uploads', filename);
-        fs.writeFileSync(filePath, JSON.stringify(exportData, null, 2));
+        await fs.promises.writeFile(filePath, JSON.stringify(exportData, null, 2));
 
         // Set cleanup after download
         res.download(filePath, filename, (err) => {
@@ -97,7 +97,7 @@ exports.importConference = async (req, res) => {
         let fileContent, conference, events;
 
         try {
-            fileContent = fs.readFileSync(filePath, 'utf-8');
+            fileContent = await fs.promises.readFile(filePath, 'utf-8');
             const parsed = JSON.parse(fileContent);
             conference = parsed.conference;
             events = parsed.events;
@@ -136,7 +136,6 @@ exports.importConference = async (req, res) => {
                     conference.location
                 ]
             );
-
             // Insert events with new IDs
             for (const event of events) {
                 await db.query(
@@ -158,7 +157,7 @@ exports.importConference = async (req, res) => {
             await db.query('COMMIT');
 
             // Clean up file after import
-            fs.unlinkSync(filePath);
+            await fs.promises.unlink(filePath);
 
             res.json({
                 message: 'Conference imported successfully',
@@ -171,7 +170,7 @@ exports.importConference = async (req, res) => {
     } catch (err) {
         // Try to clean up file on error
         if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
+            await fs.promises.unlink(req.file.path);
         }
         handleErrors(err, res);
     }
