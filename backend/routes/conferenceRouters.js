@@ -17,8 +17,9 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-router.get('/export/:conferenceId', requireAuth, requireMinRole('a'), conferenceController.exportConference);
+router.get('/export/:id', requireAuth, requireMinRole('a'), conferenceController.exportConference);
 router.post('/import', requireAuth, requireMinRole('a'), upload.single('file'), conferenceController.importConference);
 router.get('/', requireAuth, conferenceController.getAllConferences);
+router.delete('/:id', requireAuth, requireMinRole('a'), conferenceController.deleteConference);
 
 module.exports = router;
