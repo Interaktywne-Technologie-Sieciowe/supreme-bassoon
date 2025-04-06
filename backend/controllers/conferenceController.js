@@ -3,15 +3,18 @@ const path = require('path');
 const db = require('../config/database');
 const { v4: uuidv4, validate: isUuid } = require('uuid'); // Added validate import
 
+// REPLACEME: Use proper logger
+const logInfo = (msg) => console.log('[INFO]', msg);
+const logError = (msg) => console.error('[ERROR]', msg);
+
 const handleErrors = (err, res) => {
-    console.error(err);
+    logError(err); // LOG: simple error logging
     res.status(500).json({
         error: 'Internal server error',
         message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
     });
 };
 
-// Validate conference object
 const validateConference = (conference) => {
     const requiredFields = ['name', 'start_date', 'end_date', 'location'];
     for (const field of requiredFields) {
@@ -20,7 +23,6 @@ const validateConference = (conference) => {
         }
     }
 
-    // Validate dates
     const startDate = new Date(conference.start_date);
     const endDate = new Date(conference.end_date);
 
@@ -36,6 +38,7 @@ const validateConference = (conference) => {
 exports.getAllConferences = async (req, res) => {
     try {
         const { rows } = await db.query('SELECT * FROM CONFERENCE ORDER BY start_date DESC');
+        logInfo(`Fetched ${rows.length} conferences`); // LOG
         res.json(rows);
     } catch (err) {
         handleErrors(err, res);
@@ -46,7 +49,6 @@ exports.exportConference = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Validate UUID using the uuid library
         if (!isUuid(id)) {
             return res.status(400).json({ error: 'Invalid conference ID format' });
         }
@@ -65,14 +67,15 @@ exports.exportConference = async (req, res) => {
         const filePath = path.join(__dirname, '..', 'uploads', filename);
         await fs.promises.writeFile(filePath, JSON.stringify(exportData, null, 2));
 
-        // Set cleanup after download
+        logInfo(`Exported conference ${id} with ${events.length} events to ${filename}`); // LOG
+
         res.download(filePath, filename, (err) => {
             if (err) {
-                console.error('Download error:', err);
+                logError(`Download error: ${err.message}`); // LOG
             }
-            // Delete the temporary file after download
             fs.unlink(filePath, (unlinkErr) => {
-                if (unlinkErr) console.error('Failed to delete temp file:', unlinkErr);
+                if (unlinkErr) logError(`Failed to delete temp file: ${unlinkErr.message}`); // LOG
+                else logInfo(`Deleted export file ${filename}`); // LOG
             });
         });
     } catch (err) {
@@ -85,11 +88,9 @@ exports.importConference = async (req, res) => {
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'File is required' });
 
-        // Check file extension
         const fileExt = path.extname(file.originalname).toLowerCase();
         if (fileExt !== '.json') {
-            // Clean up invalid file
-            await fs.promises.unlink(file.path)
+            await fs.promises.unlink(file.path);
             return res.status(400).json({ error: 'Only JSON files are allowed' });
         }
 
@@ -102,26 +103,23 @@ exports.importConference = async (req, res) => {
             conference = parsed.conference;
             events = parsed.events;
 
-            // Validate data
             if (!conference || !events || !Array.isArray(events)) {
                 throw new Error('Invalid file format');
             }
 
             validateConference(conference);
+            logInfo(`Validated conference file with ${events.length} events`); // LOG
         } catch (parseErr) {
-            // Clean up invalid file
             await fs.promises.unlink(filePath);
             return res.status(400).json({ error: 'Invalid JSON file', message: parseErr.message });
         }
 
-        // Generate new IDs to avoid conflicts
         const newConferenceId = uuidv4();
         const now = new Date().toISOString();
 
         await db.query('BEGIN');
 
         try {
-            // Insert conference with new ID
             await db.query(
                 `INSERT INTO CONFERENCE (id, name, created_at, start_date, end_date, description, last_update, location)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -136,7 +134,7 @@ exports.importConference = async (req, res) => {
                     conference.location
                 ]
             );
-            // Insert events with new IDs
+
             for (const event of events) {
                 await db.query(
                     `INSERT INTO EVENTS (id, name, created_at, start_date, end_date, conference_id, location, last_update)
@@ -155,9 +153,9 @@ exports.importConference = async (req, res) => {
             }
 
             await db.query('COMMIT');
-
-            // Clean up file after import
             await fs.promises.unlink(filePath);
+
+            logInfo(`Imported conference ${newConferenceId} with ${events.length} events`); // LOG
 
             res.json({
                 message: 'Conference imported successfully',
@@ -168,9 +166,12 @@ exports.importConference = async (req, res) => {
             throw dbErr;
         }
     } catch (err) {
-        // Try to clean up file on error
-        if (req.file && fs.existsSync(req.file.path)) {
-            await fs.promises.unlink(req.file.path);
+        if (req.file) {
+            try {
+                await fs.promises.unlink(req.file.path);
+            } catch (unlinkErr) {
+                logError(`Failed to clean up uploaded file: ${unlinkErr.message}`); // LOG
+            }
         }
         handleErrors(err, res);
     }
@@ -180,7 +181,6 @@ exports.deleteConference = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Validate UUID using the uuid library
         if (!isUuid(id)) {
             return res.status(400).json({ error: 'Invalid conference ID format' });
         }
@@ -194,10 +194,11 @@ exports.deleteConference = async (req, res) => {
                 return res.status(404).json({ error: 'Conference not found' });
             }
 
-            // We could explicitly delete events, but the schema has CASCADE delete
             await db.query('DELETE FROM CONFERENCE WHERE id = $1', [id]);
-
             await db.query('COMMIT');
+
+            logInfo(`Deleted conference ${id}`); // LOG
+
             res.json({ message: 'Conference and related data deleted successfully' });
         } catch (dbErr) {
             await db.query('ROLLBACK');
