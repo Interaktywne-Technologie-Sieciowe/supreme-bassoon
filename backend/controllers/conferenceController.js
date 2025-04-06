@@ -110,7 +110,7 @@ exports.importConference = async (req, res) => {
             validateConference(conference);
         } catch (parseErr) {
             // Clean up invalid file
-            fs.unlinkSync(filePath);
+            await fs.promises.unlink(filePath);
             return res.status(400).json({ error: 'Invalid JSON file', message: parseErr.message });
         }
 
