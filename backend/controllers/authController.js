@@ -55,3 +55,22 @@ exports.login = async (req, res) => {
         handleErrors(err, res);
     }
 };
+
+const { sendTestEmail: sendMailUtil } = require('../utils/sendMail');
+
+exports.sendTestEmail = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    try {
+        await sendMailUtil(email);
+        res.json({ message: 'Test email sent successfully' });
+    } catch (err) {
+        console.error('Email sending error:', err);
+        res.status(500).json({ error: 'Failed to send email' });
+    }
+};
+
