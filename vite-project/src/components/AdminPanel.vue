@@ -61,10 +61,6 @@
       throw new Error('Nie udało się zapisać użytkownika')
     }
 
-    users.value.push(newUser)
-    firstName.value = ''
-    lastName.value = ''
-    email.value = ''
   } catch (error) {
     console.error(error)
     alert('Błąd przy dodawaniu użytkownika')
