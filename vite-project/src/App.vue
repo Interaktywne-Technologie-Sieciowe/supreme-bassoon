@@ -14,6 +14,9 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/calendar" class="text-white hover:text-pink-200 transition" active-class="underline">
             Calendar
           </RouterLink>
+          <RouterLink to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
+            AdminPanel
+          </RouterLink>
         </nav>
       </div>
     </header>
