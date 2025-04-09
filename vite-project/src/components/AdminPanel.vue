@@ -43,17 +43,34 @@
   const email = ref('')
   const users = ref<{ firstName: string; lastName: string; email: string }[]>([])
   
-  const addUser = () => {
-    users.value.push({
-      firstName: firstName.value,
-      lastName: lastName.value,
-      email: email.value,
+  const addUser = async () => {
+  const newUser = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newUser)
     })
-  
+
+    if (!response.ok) {
+      throw new Error('Nie udało się zapisać użytkownika')
+    }
+
+    users.value.push(newUser)
     firstName.value = ''
     lastName.value = ''
     email.value = ''
+  } catch (error) {
+    console.error(error)
+    alert('Błąd przy dodawaniu użytkownika')
   }
+}
+
   
   const removeUser = (index: number) => {
     users.value.splice(index, 1)
