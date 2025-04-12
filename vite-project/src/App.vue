@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, onMounted } from 'vue'
+
+// Zmienna przechowująca rolę użytkownika
+const userRole = ref<string | null>(null)
+
+onMounted(() => {
+  const savedRole = localStorage.getItem('userRole')  // Pobieramy rolę z localStorage
+  if (savedRole) {
+    userRole.value = savedRole  // Ustawiamy rolę użytkownika
+  }
+})
 </script>
 
 <template>
@@ -14,7 +24,8 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/calendar" class="text-white hover:text-pink-200 transition" active-class="underline">
             Calendar
           </RouterLink>
-          <RouterLink to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
+          <!-- Warunkowe renderowanie przycisku AdminPanel tylko dla roli 'Admin' -->
+          <RouterLink v-if="userRole === 'a'" to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
             AdminPanel
           </RouterLink>
         </nav>
@@ -27,8 +38,6 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 
-
-
 <style scoped>
-
+/* Dodatkowe style */
 </style>
