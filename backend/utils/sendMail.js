@@ -5,14 +5,14 @@ const transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: 'its101its@wp.pl',
-    pass: 'iTs0987654321iTs!',
+    pass: 'iTs0987654321iTs!!',
   },
 });
 
-exports.sendTestEmail = async (toEmail) => {
+exports.sendEmail = async (toEmail, password) => {
   const sender = {
     address: 'its101its@wp.pl',
-    name: 'ITS mail Test',
+    name: 'noreplay@MeetMe.com',
   };
 
   const recipients = [toEmail];
@@ -20,8 +20,8 @@ exports.sendTestEmail = async (toEmail) => {
   const mailOptions = {
     from: sender,
     to: recipients,
-    subject: 'EMAIL TESTOWY!',
-    text: 'To jest email testowy, nie ma tu czego szukać :p',
+    subject: 'Welcome to MeetMe!',
+    text: 'Welcome to MeetMe! Your temporar password is:\n\n'+password+'\n\n Please change it as soon as possible.',
     category: 'Integration Test',
   };
 

@@ -28,6 +28,9 @@ const userRole = computed(() => auth.user?.role ?? null)
           >
             AdminPanel
           </RouterLink>
+               <RouterLink to="/PasswordChange" class="text-white hover:text-pink-200 transition" active-class="underline">
+            PasswordChange
+          </RouterLink>
         </nav>
       </div>
     </header>
