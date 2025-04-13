@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const { generatePassword } = require('../utils/passwordGenerator');
 
 // Reuse centralized error handler
 const handleErrors = (err, res) => {
@@ -27,6 +28,9 @@ exports.adminImport = async (req, res) => {
     res.json({ msg: 'Import zakończony sukcesem' });
 };
 
+
+
+
 exports.createUser = async (req, res) => {
     const { firstName, lastName, email } = req.body;
 
@@ -38,6 +42,7 @@ exports.createUser = async (req, res) => {
         const newUser = await userModel.create({
             name: firstName,
             surname: lastName,
+            password: generatePassword(10),
             email,
             role_id: 'a7c0e2b2-55b4-4c31-8ec3-0e7f61f24d35'
         });
