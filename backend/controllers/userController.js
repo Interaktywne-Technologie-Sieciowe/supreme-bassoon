@@ -56,14 +56,22 @@ exports.createUser = async (req, res) => {
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
 
         const mailBody = `
-                        Hi ${firstName}!
-
-                        Your MeetMe account has been created.
-
-                        Your temporary password: ${rawPassword}
-
-                        If you want to change it now, click here:
-                        ${resetLink}
+                       <p>Hi ${firstName}!</p>
+    <p>Your MeetMe account has been created.</p>
+    <p><strong>Your temporary password:</strong> ${rawPassword}</p>
+    <p>If you want to change it now, click the button below:</p>
+    <p>
+        <a href="${resetLink}" style="
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        ">
+            Change Password
+        </a>
+    </p>
                         `;
 
         await sendEmail(email, mailBody);
