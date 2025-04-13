@@ -22,3 +22,13 @@ exports.getRoleById = async (roleId) => {
 exports.updateLastLogin = async (userId) => {
     await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userId]);
 };
+
+exports.create = async ({ name, surname, email, role_id }) => {
+    const result = await pool.query(`
+        INSERT INTO users (name, surname, email, role_id, created_at, password)
+        VALUES ($1, $2, $3, $4, NOW(), $1)
+        RETURNING *
+    `, [name, surname, email, role_id]);
+
+    return result.rows[0];
+};
