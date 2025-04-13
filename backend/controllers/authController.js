@@ -57,8 +57,6 @@ exports.login = async (req, res) => {
     }
 };
 
-
-
 exports.sendTestEmail = async (req, res) => {
     const { email } = req.body;
 
