@@ -17,6 +17,9 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
             AdminPanel
           </RouterLink>
+               <RouterLink to="/PasswordChange" class="text-white hover:text-pink-200 transition" active-class="underline">
+            PasswordChange
+          </RouterLink>
         </nav>
       </div>
     </header>
