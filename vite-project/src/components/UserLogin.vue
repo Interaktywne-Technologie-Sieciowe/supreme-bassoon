@@ -26,14 +26,6 @@
         </button>
       </form>
 
-      <button
-        @click="sendTestEmail"
-        class="w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition"
-          
-      >Wyślij testowego maila
-      </button>
-
-
       <p class="text-sm text-center text-white/80">
         Nie pamiętasz hasła?
         <a href="#" class="text-white hover:underline">Zresetuj je!</a>
@@ -79,30 +71,4 @@ const login = async () => {
     console.error('Błąd podczas logowania:', error)
   }
 }
-
-const sendTestEmail = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/api/login/send-test-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: 'nemizvgueksxpuiamq@ytnhy.com', // 10minute jakby co to jest
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Błąd podczas wysyłania maila');
-    }
-
-    const data = await response.json();
-    console.log('Mail wysłany:', data);
-    alert('Mail testowy wysłany!');
-
-  } catch (error) {
-    console.error('Błąd wysyłania maila:', error);
-    alert('Coś poszło nie tak');
-  }
-};
 </script>
