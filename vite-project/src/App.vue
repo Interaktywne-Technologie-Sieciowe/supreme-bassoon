@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+
+const auth = useAuthStore()
+
+const userRole = computed(() => auth.user?.role ?? null)
 </script>
 
 <template>
@@ -14,7 +20,12 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/calendar" class="text-white hover:text-pink-200 transition" active-class="underline">
             Calendar
           </RouterLink>
-          <RouterLink to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
+          <RouterLink
+            v-if="userRole === 'admin'"
+            to="/AdminPanel"
+            class="text-white hover:text-pink-200 transition"
+            active-class="underline"
+          >
             AdminPanel
           </RouterLink>
         </nav>
@@ -27,8 +38,5 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 
-
-
 <style scoped>
-
 </style>
