@@ -21,7 +21,7 @@ exports.sendEmail = async (toEmail, messageBody) => {
     from: sender,
     to: recipients,
     subject: 'Welcome to MeetMe!',
-    text: messageBody,
+    html: messageBody,
     category: 'Integration Test',
   };
 
