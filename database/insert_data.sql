@@ -1,9 +1,9 @@
 -- USERS_ROLES
-INSERT INTO USERS_ROLES (name,code) 
-VALUES ('admin','a');
+    INSERT INTO USERS_ROLES (id,name,code) 
+VALUES ('9f1c7a80-3b6a-4e4b-9f87-1a5f2c3d8e9b','admin','a');
 
-INSERT INTO USERS_ROLES (name,code) 
-VALUES ('user','u');
+INSERT INTO USERS_ROLES (id,name,code) 
+VALUES ('a7c0e2b2-55b4-4c31-8ec3-0e7f61f24d35','user','u');
 
 -- USERS
 INSERT INTO USERS (name, surname, phone, email, password, created_at, last_login, role_id)
