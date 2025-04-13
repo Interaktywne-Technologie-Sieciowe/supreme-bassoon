@@ -27,7 +27,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
 
 const token = new URLSearchParams(window.location.search).get('token');
 const email = ref('');
@@ -51,14 +50,28 @@ onMounted(() => {
 const submitReset = async () => {
   error.value = '';
   success.value = '';
+
   try {
-    const res = await axios.post('/auth/reset-password', {
-      token,
-      newPassword: password.value
+    const response = await fetch('http://localhost:3000/api/login/reset-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // dla cookies, jeśli kiedyś potrzebne
+      body: JSON.stringify({
+        token,
+        newPassword: password.value,
+      }),
     });
-    success.value = res.data.message || 'Hasło zostało zmienione!';
+
+    if (!response.ok) {
+      throw new Error(`Błąd: ${response.status}`);
+    }
+
+    const data = await response.json();
+    success.value = data.message || 'Hasło zmienione pomyślnie!';
   } catch (err) {
-    error.value = err.response?.data?.error || 'Wystąpił błąd przy zmianie hasła.';
+    error.value = err.message || 'Wystąpił błąd przy zmianie hasła.';
   }
 };
 </script>
