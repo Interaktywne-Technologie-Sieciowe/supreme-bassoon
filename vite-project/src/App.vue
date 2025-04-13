@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-// Zmienna przechowująca rolę użytkownika
-const userRole = ref<string | null>(null)
 
-onMounted(() => {
-  const savedRole = localStorage.getItem('userRole')  // Pobieramy rolę z localStorage
-  if (savedRole) {
-    userRole.value = savedRole  // Ustawiamy rolę użytkownika
-  }
-})
+const auth = useAuthStore()
+
+const userRole = computed(() => auth.user?.role ?? null)
 </script>
 
 <template>
@@ -24,8 +20,12 @@ onMounted(() => {
           <RouterLink to="/calendar" class="text-white hover:text-pink-200 transition" active-class="underline">
             Calendar
           </RouterLink>
-          <!-- Warunkowe renderowanie przycisku AdminPanel tylko dla roli 'Admin' -->
-          <RouterLink v-if="userRole === 'a'" to="/AdminPanel" class="text-white hover:text-pink-200 transition" active-class="underline">
+          <RouterLink
+            v-if="userRole === 'admin'"
+            to="/AdminPanel"
+            class="text-white hover:text-pink-200 transition"
+            active-class="underline"
+          >
             AdminPanel
           </RouterLink>
         </nav>
@@ -39,5 +39,4 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Dodatkowe style */
 </style>
