@@ -1,8 +1,5 @@
 -- USERS_ROLES
 INSERT INTO USERS_ROLES (name,code) 
-VALUES ('guest','g');
-
-INSERT INTO USERS_ROLES (name,code) 
 VALUES ('admin','a');
 
 INSERT INTO USERS_ROLES (name,code) 
@@ -21,17 +18,17 @@ VALUES
 
 ('Piotr', 'Lewandowski', '777888999', 'piotr.lewandowski@mail.com', 'plewandowski', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
-('Anna', 'Zielińska', '333222111', 'anna.zielinska@mail.com', 'azielinska', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'g' LIMIT 1)),
+('Anna', 'Zielińska', '333222111', 'anna.zielinska@mail.com', 'azielinska', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
-('Tomasz', 'Szymański', '666777888', 'tomasz.szymanski@mail.com', 'tszymanowski', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'g' LIMIT 1)),
+('Tomasz', 'Szymański', '666777888', 'tomasz.szymanski@mail.com', 'tszymanowski', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
-('Karolina', 'Wójcik', '999000111', 'karolina.wojcik@mail.com', 'kwojcik', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'g' LIMIT 1)),
+('Karolina', 'Wójcik', '999000111', 'karolina.wojcik@mail.com', 'kwojcik', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
-('Marek', 'Kozłowski', '222333444', 'marek.kozlowski@mail.com', 'mkozlowski', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'g' LIMIT 1));
+('Marek', 'Kozłowski', '222333444', 'marek.kozlowski@mail.com', 'mkozlowski', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1));
 
 INSERT INTO USERS (id, name, surname, phone, email, password, created_at, last_login, role_id) 
 VALUES
-('fd8a8522-111a-4dcb-b434-24f955917452','Katarzyna', 'Jankowska', '555666777', 'katarzyna.jankowska@mail.com', 'kjankiewska', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'g' LIMIT 1)),
+('fd8a8522-111a-4dcb-b434-24f955917452','Katarzyna', 'Jankowska', '555666777', 'katarzyna.jankowska@mail.com', 'kjankiewska', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
 ('fd8a8522-222b-4dcb-b434-24f955917452','Adam', 'Małysz', '533651471', 'adam.malysz@latam.bo.chce.pl', '$2b$10$anDa4/DY6IVn1B1TdeGQbOkOq708iJPOOj19pCh3orqtPY5RwDaqC', now(), NULL, (SELECT id FROM USERS_ROLES WHERE code = 'u' LIMIT 1)),
 
