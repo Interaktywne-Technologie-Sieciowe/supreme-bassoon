@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 const { generateTokenForUser } = require('../utils/auth');
-const { sendTestEmail: sendMailUtil } = require('../utils/sendMail');
+const { sendEmail: sendMailUtil } = require('../utils/sendMail');
 
 // Optional shared error handler
 const handleErrors = (err, res) => {
@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.sendTestEmail = async (req, res) => {
+exports.sendEmail = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
