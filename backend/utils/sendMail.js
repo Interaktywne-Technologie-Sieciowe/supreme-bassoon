@@ -5,7 +5,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: 'its101its@wp.pl',
-    pass: 'iTs0987654321iTs!',
+    pass: 'iTs0987654321iTs!!',
   },
 });
 
