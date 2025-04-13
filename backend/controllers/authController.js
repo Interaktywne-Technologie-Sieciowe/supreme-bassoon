@@ -1,7 +1,8 @@
+const jwt = require('jsonwebtoken');
+const { SECRET_KEY } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 const { generateTokenForUser } = require('../utils/auth');
-const { sendEmail: sendMailUtil } = require('../utils/sendMail');
 
 // Optional shared error handler
 const handleErrors = (err, res) => {
@@ -57,19 +58,26 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.sendEmail = async (req, res) => {
-    const { email } = req.body;
+exports.resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
 
-    if (!email) {
-        return res.status(400).json({ error: 'Email is required' });
+    if (!token || !newPassword) {
+        return res.status(400).json({ error: 'Missing token or new password' });
     }
 
     try {
-        await sendMailUtil(email);
-        res.json({ message: 'Test email sent successfully' });
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const { email } = decoded;
+
+        const user = await userModel.findByEmail(email);
+        if (!user) return res.status(404).json({ error: 'User does not exist' });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await userModel.updatePasswordByEmail(email, hashedPassword);
+
+        res.json({ message: 'Password changed succesfully' });
     } catch (err) {
-        console.error('Email sending error:', err);
-        res.status(500).json({ error: 'Failed to send email' });
+        console.error('Error:', err);
+        res.status(401).json({ error: 'Invalid or expired token' });
     }
 };
-

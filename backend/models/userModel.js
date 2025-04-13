@@ -32,3 +32,7 @@ exports.create = async ({ name, surname, email, role_id ,password}) => {
 
     return result.rows[0];
 };
+
+exports.updatePasswordByEmail = async (email, newPassword) => {
+    await pool.query('UPDATE users SET password = $1 WHERE email = $2', [newPassword, email]);
+};

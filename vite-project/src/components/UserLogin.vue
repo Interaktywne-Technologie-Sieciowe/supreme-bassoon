@@ -27,8 +27,8 @@
       </form>
 
       <p class="text-sm text-center text-white/80">
-        Nie masz konta?
-        <a href="#" class="text-white hover:underline">Zarejestruj się</a>
+        Nie pamiętasz hasła?
+        <a href="#" class="text-white hover:underline">Zresetuj je!</a>
       </p>
       <p class="text-sm text-center text-white/80">
         <a href="#" class="text-white hover:underline">Dostęp bez logowania</a>

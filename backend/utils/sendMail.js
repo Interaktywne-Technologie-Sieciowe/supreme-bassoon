@@ -9,10 +9,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.sendEmail = async (toEmail, password) => {
+exports.sendEmail = async (toEmail, messageBody) => {
   const sender = {
     address: 'its101its@wp.pl',
-    name: 'noreplay@MeetMe.com',
+    name: 'noreply@MeetMe.com',
   };
 
   const recipients = [toEmail];
@@ -21,7 +21,7 @@ exports.sendEmail = async (toEmail, password) => {
     from: sender,
     to: recipients,
     subject: 'Welcome to MeetMe!',
-    text: 'Welcome to MeetMe! Your temporar password is:\n\n'+password+'\n\n Please change it as soon as possible.',
+    html: messageBody,
     category: 'Integration Test',
   };
 
