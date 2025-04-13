@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const { SECRET_KEY } = require('../utils/auth');
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 const { generatePassword } = require('../utils/passwordGenerator');
@@ -50,7 +52,21 @@ exports.createUser = async (req, res) => {
             role_id: 'a7c0e2b2-55b4-4c31-8ec3-0e7f61f24d35'
         });
 
-        await sendEmail(email, rawPassword);
+        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '15m' });
+        const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
+
+        const mailBody = `
+                        Hi ${firstName}!
+
+                        Your MeetMe account has been created.
+
+                        Your temporary password: ${rawPassword}
+
+                        If you want to change it now, click here:
+                        ${resetLink}
+                        `;
+
+        await sendEmail(email, mailBody);
 
         res.status(201).json(newUser);
     } catch (err) {

@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 const { generateTokenForUser } = require('../utils/auth');
-const { sendEmail: sendMailUtil } = require('../utils/sendMail');
 
 // Optional shared error handler
 const handleErrors = (err, res) => {
@@ -56,20 +55,3 @@ exports.login = async (req, res) => {
         handleErrors(err, res);
     }
 };
-
-exports.sendEmail = async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ error: 'Email is required' });
-    }
-
-    try {
-        await sendMailUtil(email);
-        res.json({ message: 'Test email sent successfully' });
-    } catch (err) {
-        console.error('Email sending error:', err);
-        res.status(500).json({ error: 'Failed to send email' });
-    }
-};
-

@@ -6,7 +6,7 @@ const { requireMinRole } = require('../middlewares/roles');
 
 router.get('/', getAllUsers);
 router.post('/admin/import', requireAuth, requireMinRole('a'), adminImport);
-router.post('/', createUser); //requireAuth, requireMinRole('u'),    dla wygody wywaliłem
+router.post('/createUser', createUser); //requireAuth, requireMinRole('a'), chyba to min role nie działa
 
 
 
