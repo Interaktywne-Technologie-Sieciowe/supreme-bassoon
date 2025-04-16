@@ -40,10 +40,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth' // Import the Pinia store
+import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const authStore = useAuthStore()
+const router = useRouter()
 
 const login = async () => {
   try {
@@ -66,7 +68,8 @@ const login = async () => {
     const data = await response.json()
     console.log('Sukces logowania:', data)
     authStore.setUser(data.user)
-
+    router.push("/calendar")
+    
   } catch (error) {
     console.error('Błąd podczas logowania:', error)
   }

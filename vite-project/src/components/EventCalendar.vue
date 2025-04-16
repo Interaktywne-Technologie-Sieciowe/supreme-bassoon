@@ -44,10 +44,17 @@ const calendarOptions = ref({
 </script>
 
 <template>
-  <div class="calendar-container">
-    <FullCalendar :options="calendarOptions" />
+  <div class="page-layout">
+    <div class="left-column">
+      <FullCalendar :options="calendarOptions" />
+    </div>
+    <div class="right-column">
+      <div class="box">Box 1</div>
+      <div class="box">Box 2</div>
+    </div>
   </div>
 </template>
+
 
 <style scoped>
 .calendar-container {
@@ -76,4 +83,32 @@ const calendarOptions = ref({
 :deep(#fc-dom-1) {
   margin-left: 30px;
 }
+.page-layout {
+  display: flex;
+  height: calc(100vh - 5rem);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.right-column {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.left-column {
+  flex: 1;
+  overflow: auto;
+}
+
+.box {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: white;
+  height: 50%;
+}
+
 </style>
