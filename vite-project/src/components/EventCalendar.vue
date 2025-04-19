@@ -108,11 +108,21 @@ const editEvent = () => {
   // Here you would typically redirect to an edit page or open an edit modal
 }
 
-const deleteEvent = () => {
-  // Implement delete functionality
-  console.log("Deleting event:", selectedEvent.value.id);
-  // Add confirmation dialog and API call to delete
-}
+const deleteEvent = async () => {
+  if (confirm("Are you sure you want to delete this event?")) {
+    try {
+      await fetch(`http://localhost:3000/api/events/${selectedEvent.value.id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      await fetchEvents(); // Refresh calendar
+      closeModal();
+    } catch (err) {
+      console.error("Error deleting event:", err);
+    }
+  }
+};
+
 
 // Function to calculate total unique conferences (safely)
 const getUniqueConferenceCount = () => {
@@ -141,7 +151,7 @@ const getUniqueConferenceCount = () => {
         <!-- Sidebar -->
         <div class="lg:col-span-1 space-y-6">
           <!-- Instructions Panel -->
-          <div class="bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-700">
+          <div class="bg-gray-800 rounded-xl p-3 shadow-lg border border-gray-700">
             <h3 class="text-xl font-semibold text-indigo-300 mb-3">
               <span class="mr-2">📋</span>Calendar Guide
             </h3>
@@ -166,7 +176,7 @@ const getUniqueConferenceCount = () => {
           </div>
 
           <!-- Stats Panel -->
-          <div class="bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-700">
+          <div class="bg-gray-800 rounded-xl p-3 shadow-lg border border-gray-700">
             <h3 class="text-xl font-semibold text-indigo-300 mb-3">
               <span class="mr-2">📊</span>Calendar Stats
             </h3>
@@ -246,133 +256,6 @@ const getUniqueConferenceCount = () => {
 </template>
 
 <style scoped>
-/* Base styles for FullCalendar */
-:deep(.fc) {
-  font-family: inherit;
-}
-
-:deep(.fc-theme-standard) {
-  background-color: transparent;
-}
-
-:deep(.fc-toolbar-title) {
-  color: #c4b5fd;
-  /* Indigo-300 */
-  font-size: 1.25rem !important;
-  font-weight: 600;
-}
-
-:deep(.fc-button) {
-  background-color: #4f46e5 !important;
-  /* Indigo-600 */
-  border-color: #4338ca !important;
-  /* Indigo-700 */
-  color: white !important;
-  font-weight: 500;
-  text-transform: capitalize;
-  padding: 0.375rem 0.75rem;
-  transition: all 0.2s;
-}
-
-:deep(.fc-button:hover) {
-  background-color: #4338ca !important;
-  /* Indigo-700 */
-  border-color: #3730a3 !important;
-  /* Indigo-800 */
-}
-
-:deep(.fc-button-active) {
-  background-color: #3730a3 !important;
-  /* Indigo-800 */
-  border-color: #312e81 !important;
-  /* Indigo-900 */
-}
-
-/* Calendar grid & cells */
-:deep(.fc-scrollgrid) {
-  border-color: #374151 !important;
-  /* Gray-700 */
-}
-
-:deep(.fc-scrollgrid-section > td) {
-  border-color: #374151 !important;
-  /* Gray-700 */
-}
-
-:deep(.fc-col-header-cell) {
-  background-color: #1f2937;
-  /* Gray-800 */
-  color: #9ca3af;
-  /* Gray-400 */
-  font-weight: 600;
-  padding: 0.75rem 0;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  border-color: #374151 !important;
-  /* Gray-700 */
-}
-
-:deep(.fc-daygrid-day) {
-  transition: background-color 0.15s;
-}
-
-:deep(.fc-daygrid-day:hover) {
-  background-color: #1f2937;
-  /* Gray-800 */
-}
-
-:deep(.fc-daygrid-day-number) {
-  color: #d1d5db;
-  /* Gray-300 */
-  font-size: 0.875rem;
-  padding: 0.5rem;
-}
-
-:deep(.fc-day-other .fc-daygrid-day-number) {
-  color: #6b7280;
-  /* Gray-500 */
-}
-
-/* Today highlight */
-:deep(.fc-day-today) {
-  background-color: rgba(79, 70, 229, 0.1) !important;
-  /* Indigo with opacity */
-}
-
-/* Events styling */
-:deep(.fc-event) {
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin: 0.125rem 0;
-  border-left-width: 3px;
-  transition: transform 0.2s, opacity 0.2s;
-}
-
-:deep(.fc-event:hover) {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-}
-
-:deep(.fc-daygrid-event-dot) {
-  border-width: 5px;
-}
-
-/* Fix more+ link */
-:deep(.fc-daygrid-more-link) {
-  color: #93c5fd;
-  /* Blue-300 */
-  font-weight: 500;
-}
-
-/* For the current day */
-:deep(.fc-day-today .fc-daygrid-day-frame) {
-  border: 1px solid rgba(79, 70, 229, 0.5);
-  /* Indigo with opacity */
-}
-
 .calendar-container {
   min-height: 600px;
   height: 100%;
@@ -383,10 +266,6 @@ const getUniqueConferenceCount = () => {
   :deep(.fc-toolbar) {
     flex-direction: column;
     gap: 0.5rem;
-  }
-
-  :deep(.fc-toolbar-title) {
-    font-size: 1rem !important;
   }
 }
 </style>
