@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import type { Event } from '@/types/event'
+import { useAuthStore } from '@/stores/auth'
+
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import plLocale from '@fullcalendar/core/locales/pl'
 
-const events = ref([])
+const auth = useAuthStore()
+const user = auth.user
+
+const events = ref<any[]>([]) // FullCalendar uses a specific event shape
+const selectedEvent = ref<any | null>(null)
 
 const fetchEvents = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/events')
-    const data = await response.json()
+    const data: Event[] = await response.json()
 
-    events.value = data.map((event: any) => ({
+    events.value = data.map((event) => ({
       id: event.id,
       title: `${event.name} (${event.conference_name})`,
       start: event.start_date,
@@ -20,8 +27,10 @@ const fetchEvents = async () => {
       extendedProps: {
         location: event.location,
         conferenceId: event.conference_id,
+        name: event.name,
+        conferenceName: event.conference_name,
       },
-      backgroundColor: '#7c3aed', 
+      backgroundColor: '#7c3aed',
       borderColor: '#6d28d9',
       textColor: 'white',
     }))
@@ -30,27 +39,41 @@ const fetchEvents = async () => {
   }
 }
 
-onMounted(() => {
-  fetchEvents()
-})
+onMounted(fetchEvents)
 
 const calendarOptions = ref({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
   height: '100%',
   locale: plLocale,
-  events: events
+  events: events,
+  eventClick: (info: any) => {
+    selectedEvent.value = info.event
+  }
 })
 </script>
+
 
 <template>
   <div class="page-layout">
     <div class="left-column">
       <FullCalendar :options="calendarOptions" />
     </div>
-    <div class="right-column">
-      <div class="box">Box 1</div>
-      <div class="box">Box 2</div>
+
+    <div class="right-column" v-if="selectedEvent">
+      <div class="box">
+        <h3>{{ selectedEvent.title }}</h3>
+        <p><strong>Start:</strong> {{ selectedEvent.startStr }}</p>
+        <p><strong>End:</strong> {{ selectedEvent.endStr }}</p>
+        <p><strong>Location:</strong> {{ selectedEvent.extendedProps.location }}</p>
+        <p><strong>Conference:</strong> {{ selectedEvent.extendedProps.conferenceName }}</p>
+      </div>
+
+      <!-- Show only if user is admin -->
+      <div class="box" v-if="user?.role === 'admin'">
+        <h3>Admin Panel</h3>
+        <button>Edit Event</button>
+      </div>
     </div>
   </div>
 </template>
@@ -83,6 +106,7 @@ const calendarOptions = ref({
 :deep(#fc-dom-1) {
   margin-left: 30px;
 }
+
 .page-layout {
   display: flex;
   height: calc(100vh - 5rem);
@@ -110,5 +134,4 @@ const calendarOptions = ref({
   color: white;
   height: 50%;
 }
-
 </style>
