@@ -77,3 +77,23 @@ exports.createUser = async (req, res) => {
         handleErrors(err, res);
     }
 };
+
+exports.deleteUser = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ error: "Brakuje ID użytkownika" });
+    }
+
+    try {
+        const deleted = await userModel.delete(id);
+
+        if (deleted.rowCount === 0) {
+            return res.status(404).json({ error: "Użytkownik nie istnieje" });
+        }
+
+        res.status(200).json({ message: "Użytkownik usunięty pomyślnie" });
+    } catch (err) {
+        handleErrors(err, res);
+    }
+};

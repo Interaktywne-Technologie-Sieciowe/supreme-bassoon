@@ -37,9 +37,12 @@
               <div>
                 {{ user.firstName }} {{ user.lastName }} — <span class="text-white/80">{{ user.email }}</span>
               </div>
-              <button @click="removeUser(index)"
-                class="text-sm text-red-400 hover:text-red-200 transition">Usuń</button>
+              <button @click="deleteUserFromDb(index, user.id)"
+                class="text-sm text-red-400 hover:text-red-200 transition">
+                Usuń
+              </button>
             </li>
+
           </ul>
         </div>
 
@@ -57,7 +60,7 @@ import { ref, onMounted } from 'vue'
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
-const users = ref<{ firstName: string; lastName: string; email: string }[]>([])
+const users = ref<{ id: string; firstName: string; lastName: string; email: string }[]>([])
 
 const isFetching = ref(false)
 const isAdding = ref(false)
@@ -126,9 +129,24 @@ const addUser = async () => {
   }
 }
 
-const removeUser = (index: number) => {
-  users.value.splice(index, 1)
-}
+const deleteUserFromDb = async (index: number, userId: string) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Błąd przy usuwaniu użytkownika');
+    }
+
+    users.value.splice(index, 1);
+  } catch (error) {
+    console.error(error);
+    alert('Nie udało się usunąć użytkownika');
+  }
+};
+
 
 onMounted(fetchUsers)
 </script>
