@@ -1,3 +1,5 @@
+-- Up Migration
+
 CREATE TABLE
     USERS_ROLES (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -59,3 +61,18 @@ CREATE TABLE
         conference_id UUID REFERENCES CONFERENCE (id) ON DELETE CASCADE, -- If conference is deleted, delete associated conference records
         PRIMARY KEY (user_id, conference_id)
     );
+
+
+-- Down Migration
+
+DROP TABLE IF EXISTS USERS_CONFERENCE CASCADE;
+
+DROP TABLE IF EXISTS BOOKMARKS CASCADE;
+
+DROP TABLE IF EXISTS EVENTS CASCADE;
+
+DROP TABLE IF EXISTS CONFERENCE CASCADE;
+
+DROP TABLE IF EXISTS USERS CASCADE;
+
+DROP TABLE IF EXISTS USERS_ROLES CASCADE;
