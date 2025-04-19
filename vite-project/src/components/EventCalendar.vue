@@ -51,6 +51,18 @@ const calendarOptions = ref({
     selectedEvent.value = info.event
   }
 })
+const formatDateTime = (dateStr: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  const date = new Date(dateStr)
+  return new Intl.DateTimeFormat('pl-PL', options).format(date)
+}
+
 </script>
 
 
@@ -60,28 +72,37 @@ const calendarOptions = ref({
       <FullCalendar :options="calendarOptions" />
     </div>
 
-    <div class="right-column" v-if="selectedEvent">
-      <div class="box">
+    <div class="right-column">
+      <div v-if="selectedEvent" class="box">
         <h3>{{ selectedEvent.title }}</h3>
-        <p><strong>Start:</strong> {{ selectedEvent.startStr }}</p>
-        <p><strong>End:</strong> {{ selectedEvent.endStr }}</p>
+        <p><strong>Start:</strong> {{ formatDateTime(selectedEvent.startStr) }}</p>
+        <p><strong>End:</strong> {{ formatDateTime(selectedEvent.endStr) }}</p>
         <p><strong>Location:</strong> {{ selectedEvent.extendedProps.location }}</p>
         <p><strong>Conference:</strong> {{ selectedEvent.extendedProps.conferenceName }}</p>
       </div>
 
-      <!-- Show only if user is admin -->
-      <div class="box" v-if="user?.role === 'admin'">
+      <div v-if="selectedEvent && user?.role === 'admin'" class="box">
         <h3>Admin Panel</h3>
         <button>Edit Event</button>
       </div>
+
+      <div v-else class="box">
+        <h3>How to Use the Calendar</h3>
+        <ul>
+          <li>📅 Click on any event to view details here.</li>
+          <li>➡️ Use the arrows to switch between months.</li>
+          <li>🎨 Colored events represent different conferences.</li>
+          <li>👤 Admins can edit events after selecting one.</li>
+        </ul>
+      </div>
     </div>
   </div>
+
 </template>
 
 
 <style scoped>
 .calendar-container {
-  height: calc(100vh - 5rem);
   max-width: 100%;
   overflow: auto;
   color: white;
@@ -89,12 +110,21 @@ const calendarOptions = ref({
 
 :deep(.fc) {
   color: white;
+  font-family: inherit;
 }
 
-:deep(.fc .fc-scrollgrid) {
-  width: 100%;
+:deep(.fc-event),
+:deep(.fc-daygrid-event) {
+  text-decoration: none !important;
+  color: white !important;
+  cursor: pointer;
 }
 
+:deep(.fc-event:hover) {
+  opacity: 0.9;
+}
+
+:deep(.fc-scrollgrid),
 :deep(.fc-theme-standard .fc-scrollgrid) {
   background-color: #22222271;
 }
@@ -112,18 +142,25 @@ const calendarOptions = ref({
   height: calc(100vh - 5rem);
   gap: 1rem;
   padding: 1rem;
-}
-
-.right-column {
-  flex: 0 0 40%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  box-sizing: border-box;
 }
 
 .left-column {
+  flex: 0 0 60%;
+  max-width: 60%;
+  min-width: 600px;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right-column {
   flex: 1;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .box {
