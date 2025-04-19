@@ -1,22 +1,22 @@
-const jwt = require('jsonwebtoken');
-const { SECRET_KEY } = require('../utils/auth');
-const bcrypt = require('bcrypt');
-const userModel = require('../models/userModel');
-const { generatePassword } = require('../utils/passwordGenerator');
-const { sendEmail } = require('../utils/sendMail');
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require("../utils/auth");
+const bcrypt = require("bcrypt");
+const userModel = require("../models/userModel");
+const { generatePassword } = require("../utils/passwordGenerator");
+const { sendEmail } = require("../utils/sendMail");
 
 // Reuse centralized error handler
 const handleErrors = (err, res) => {
-    console.error('Error:', err);
+    console.error("Error:", err);
 
     if (err.code) {
         switch (err.code) {
-            case '22P02':
-                return res.status(400).json({ error: 'Invalid input format', details: err.detail });
+            case "22P02":
+                return res.status(400).json({ error: "Invalid input format", details: err.detail });
         }
     }
 
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: "Internal server error" });
 };
 
 exports.getAllUsers = async (req, res) => {
@@ -28,15 +28,11 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-exports.adminImport = async (req, res) => {
-    res.json({ msg: 'Import zakończony sukcesem' });
-};
-
 exports.createUser = async (req, res) => {
     const { firstName, lastName, email } = req.body;
 
     if (!firstName || !lastName || !email) {
-        return res.status(400).json({ error: 'Brakuje wymaganych danych' });
+        return res.status(400).json({ error: "Brakuje wymaganych danych" });
     }
 
     try {
@@ -49,10 +45,10 @@ exports.createUser = async (req, res) => {
             surname: lastName,
             password: hashedPassword,
             email,
-            role_id: 'a7c0e2b2-55b4-4c31-8ec3-0e7f61f24d35'
+            role_id: "a7c0e2b2-55b4-4c31-8ec3-0e7f61f24d35",
         });
 
-        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '15m' });
+        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
 
         const mailBody = `
