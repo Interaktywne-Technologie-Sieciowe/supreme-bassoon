@@ -33,11 +33,13 @@ exports.login = async (req, res) => {
 
         await userModel.updateLastLogin(user.id);
 
+        const oneHourInMilliseconds = 60 * 60 * 1000;
+
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',
-            maxAge: 3600 * 1000,
+            maxAge: oneHourInMilliseconds,
             path: '/'
         });
 
