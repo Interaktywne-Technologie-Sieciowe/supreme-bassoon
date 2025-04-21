@@ -34,8 +34,11 @@
         <a href="#" class="text-white hover:underline">Zresetuj je!</a>
       </p>
       <p class="text-sm text-center text-white/80">
-        <a href="#" class="text-white hover:underline">Dostęp bez logowania</a>
+        <a href="#" class="text-white hover:underline" @click.prevent="guestLogin">
+          Dostęp bez logowania
+        </a>
       </p>
+
     </div>
   </div>
 </template>
@@ -50,6 +53,21 @@ const password = ref('')
 const isLoading = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
+const guestLogin = () => {
+  const guestUser = {
+    id: 'guest',
+    name: 'Gość',
+    surname: '',
+    email: '',
+    phone: '',
+    created_at: '',
+    last_login: '',
+    role: 'guest',
+  }
+
+  authStore.setUser(guestUser)
+  router.push('/') // Redirect to homepage
+}
 
 const login = async () => {
   isLoading.value = true
