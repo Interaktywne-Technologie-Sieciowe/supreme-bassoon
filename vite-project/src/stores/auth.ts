@@ -25,5 +25,21 @@ export const useAuthStore = defineStore("auth", {
       // Clear the token cookie when logging out
       document.cookie = "token=; Max-Age=0; path=/";
     },
+    async initAuth() {
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/me", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.user = data.user;
+        } else {
+          this.user = null;
+        }
+      } catch (e) {
+        console.error("Session check failed", e);
+        this.user = null;
+      }
+    },
   },
 });
