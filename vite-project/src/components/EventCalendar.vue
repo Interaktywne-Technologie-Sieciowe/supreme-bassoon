@@ -14,7 +14,8 @@ const user = auth.user
 const events = ref<any[]>([]) // FullCalendar uses a specific event shape
 const selectedEvent = ref<any | null>(null)
 const isModalOpen = ref(false)
-
+const editMode = ref(false)
+const editableEvent = ref<any | null>(null)
 // Define color palette outside the function to ensure it's available
 const colorPalette = [
   { bg: '#8b5cf6', border: '#7c3aed' }, // Violet
@@ -94,10 +95,6 @@ const calendarOptions = ref({
   }
 })
 
-const closeModal = () => {
-  isModalOpen.value = false
-}
-
 const formatDateTime = (dateStr: string) => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -108,12 +105,6 @@ const formatDateTime = (dateStr: string) => {
   }
   const date = new Date(dateStr)
   return new Intl.DateTimeFormat('pl-PL', options).format(date)
-}
-
-const editEvent = () => {
-  // Implement edit functionality
-  console.log("Editing event:", selectedEvent.value.id);
-  // Here you would typically redirect to an edit page or open an edit modal
 }
 
 const deleteEvent = async () => {
@@ -140,6 +131,89 @@ const getUniqueConferenceCount = () => {
     .filter(id => id !== undefined);
   return new Set(conferenceIds).size;
 };
+
+
+
+
+function closeModal() {
+  isModalOpen.value = false
+  editMode.value = false
+  selectedEvent.value = null
+  editableEvent.value = {}
+}
+
+function editEvent() {
+  editMode.value = true
+  editableEvent.value = {
+    name: selectedEvent.value.extendedProps.name,
+    conferenceName: selectedEvent.value.extendedProps.conferenceName,
+    start: selectedEvent.value.start.toISOString().slice(0, 16), // 'YYYY-MM-DDTHH:MM'
+    end: selectedEvent.value.end.toISOString().slice(0, 16),
+    location: selectedEvent.value.extendedProps.location
+  }
+}
+
+async function saveEvent() {
+  try {
+    console.log("Submitting updated dates:", editableEvent.value.start, editableEvent.value.end);
+    const response = await fetch(`http://localhost:3000/api/events/${selectedEvent.value.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        name: editableEvent.value.name,
+        start_date: editableEvent.value.start,
+        end_date: editableEvent.value.end,
+        location: editableEvent.value.location
+      })
+    });
+
+    const result = await response.json();
+    const updated = result.event;
+
+    const colorInfo = getColorForConference(updated.conference_id);
+
+    const updatedEvent = {
+      id: updated.id,
+      title: `${updated.name} (${selectedEvent.value.extendedProps.conferenceName})`,
+      start: updated.start_date,
+      end: updated.end_date,
+      extendedProps: {
+        name: updated.name,
+        location: updated.location,
+        conferenceId: updated.conference_id,
+        conferenceName: selectedEvent.value.extendedProps.conferenceName
+      },
+      backgroundColor: colorInfo.bg,
+      borderColor: colorInfo.border,
+      textColor: 'white'
+    };
+
+    // Replace event in list
+    const index = events.value.findIndex(e => e.id === updated.id);
+    if (index !== -1) {
+      events.value[index] = updatedEvent;
+    }
+
+    // Update FullCalendar instance directly
+    selectedEvent.value.setStart(new Date(updated.start_date));
+    selectedEvent.value.setEnd(new Date(updated.end_date));
+    selectedEvent.value.setExtendedProp('name', updated.name);
+    selectedEvent.value.setExtendedProp('location', updated.location);
+    selectedEvent.value.setProp('title', updatedEvent.title);
+    selectedEvent.value.setProp('backgroundColor', updatedEvent.backgroundColor);
+    selectedEvent.value.setProp('borderColor', updatedEvent.borderColor);
+
+    editMode.value = false;
+
+  } catch (err) {
+    console.error("Error updating event:", err);
+  }
+}
+
+
 </script>
 
 <template>
@@ -219,21 +293,34 @@ const getUniqueConferenceCount = () => {
 
         <div v-if="selectedEvent" class="space-y-4">
           <div class="bg-gray-700 p-4 rounded-lg">
-            <h3 class="text-xl font-semibold mb-2">{{ selectedEvent.extendedProps.name }}</h3>
-            <p class="text-indigo-300 text-sm mb-2">{{ selectedEvent.extendedProps.conferenceName }}</p>
-
-            <div class="space-y-2 mt-4">
-              <div class="flex">
-                <span class="text-gray-400 w-20">Start:</span>
-                <span>{{ formatDateTime(selectedEvent.startStr) }}</span>
-              </div>
-              <div class="flex">
-                <span class="text-gray-400 w-20">End:</span>
-                <span>{{ formatDateTime(selectedEvent.endStr) }}</span>
-              </div>
-              <div class="flex">
-                <span class="text-gray-400 w-20">Location:</span>
-                <span>{{ selectedEvent.extendedProps.location }}</span>
+            <div v-if="editMode">
+              <input v-model="editableEvent.name"
+                class="w-full mb-2 p-2 rounded bg-gray-800 border border-gray-600 text-white" />
+              <input v-model="editableEvent.conferenceName"
+                class="w-full mb-2 p-2 rounded bg-gray-800 border border-gray-600 text-white" />
+              <input type="datetime-local" v-model="editableEvent.start"
+                class="w-full mb-2 p-2 rounded bg-gray-800 border border-gray-600 text-white" />
+              <input type="datetime-local" v-model="editableEvent.end"
+                class="w-full mb-2 p-2 rounded bg-gray-800 border border-gray-600 text-white" />
+              <input v-model="editableEvent.location"
+                class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" />
+            </div>
+            <div v-else>
+              <h3 class="text-xl font-semibold mb-2">{{ selectedEvent.extendedProps.name }}</h3>
+              <p class="text-indigo-300 text-sm mb-2">{{ selectedEvent.extendedProps.conferenceName }}</p>
+              <div class="space-y-2 mt-4">
+                <div class="flex">
+                  <span class="text-gray-400 w-20">Start:</span>
+                  <span>{{ formatDateTime(selectedEvent.startStr) }}</span>
+                </div>
+                <div class="flex">
+                  <span class="text-gray-400 w-20">End:</span>
+                  <span>{{ formatDateTime(selectedEvent.endStr) }}</span>
+                </div>
+                <div class="flex">
+                  <span class="text-gray-400 w-20">Location:</span>
+                  <span>{{ selectedEvent.extendedProps.location }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -242,9 +329,13 @@ const getUniqueConferenceCount = () => {
           <div v-if="user?.role === 'admin'" class="border-t border-gray-700 pt-4">
             <h4 class="text-lg font-medium text-indigo-300 mb-3">Admin Actions</h4>
             <div class="flex space-x-3">
-              <button @click="editEvent"
+              <button v-if="!editMode" @click="editEvent"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
                 Edit Event
+              </button>
+              <button v-else @click="saveEvent"
+                class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
+                Save
               </button>
               <button @click="deleteEvent"
                 class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
@@ -258,6 +349,7 @@ const getUniqueConferenceCount = () => {
             Close
           </button>
         </div>
+
       </div>
     </div>
   </div>
