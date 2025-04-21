@@ -1,6 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
-    <div class="w-full max-w-md backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 space-y-6 text-white">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4">
+    <div
+      class="w-full max-w-md backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 space-y-6 text-white">
       <h2 class="text-2xl font-bold text-center">Zmień hasło dla</h2>
       <h2 class="text-xl font-semibold text-center text-yellow-200">{{ email || '...' }}</h2>
 
@@ -52,7 +54,7 @@ const submitReset = async () => {
   success.value = '';
 
   try {
-    const response = await fetch('http://localhost:3000/api/login/reset-password', {
+    const response = await fetch('http://localhost:3000/api/auth/reset-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
