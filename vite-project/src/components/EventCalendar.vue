@@ -24,13 +24,21 @@ const colorPalette = [
   { bg: '#ef4444', border: '#dc2626' }  // Red
 ];
 
-// Function to get a consistent color based on conference ID
-const getColorForConference = (id: number) => {
-  // Ensure id is a number and use modulo to get index
-  const numericId = typeof id === 'number' ? id : parseInt(String(id), 10) || 0;
-  const index = Math.abs(numericId) % colorPalette.length;
+const diverseHash = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) % 1_000_000; // Use a prime multiplier and large modulus
+  }
+  return Math.abs(hash); // Ensure the hash is positive
+};
+
+// Function to get a consistent color based on conference UUID with more diversity
+const getColorForConference = (id: string) => {
+  const index = diverseHash(id) % colorPalette.length;
   return colorPalette[index];
 };
+
+
 
 const fetchEvents = async () => {
   try {
@@ -256,6 +264,137 @@ const getUniqueConferenceCount = () => {
 </template>
 
 <style scoped>
+/* Base styles for FullCalendar */
+:deep(.fc) {
+  font-family: inherit;
+  cursor: default;
+  text-decoration: none;
+}
+
+:deep(.fc-theme-standard) {
+  background-color: transparent;
+}
+
+:deep(.fc-toolbar-title) {
+  color: #c4b5fd;
+  /* Indigo-300 */
+  font-size: 1.25rem !important;
+  font-weight: 600;
+}
+
+:deep(.fc-button) {
+  background-color: #4f46e5 !important;
+  /* Indigo-600 */
+  border-color: #4338ca !important;
+  /* Indigo-700 */
+  color: white !important;
+  font-weight: 500;
+  text-transform: capitalize;
+  padding: 0.375rem 0.75rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+:deep(.fc-button:hover) {
+  background-color: #4338ca !important;
+  /* Indigo-700 */
+  border-color: #3730a3 !important;
+  /* Indigo-800 */
+}
+
+:deep(.fc-button-active) {
+  background-color: #3730a3 !important;
+  /* Indigo-800 */
+  border-color: #312e81 !important;
+  /* Indigo-900 */
+}
+
+/* Calendar grid & cells */
+:deep(.fc-scrollgrid) {
+  border-color: #374151 !important;
+  /* Gray-700 */
+}
+
+:deep(.fc-scrollgrid-section > td) {
+  border-color: #374151 !important;
+  /* Gray-700 */
+}
+
+:deep(.fc-col-header-cell) {
+  background-color: #1f2937;
+  /* Gray-800 */
+  color: #9ca3af;
+  /* Gray-400 */
+  font-weight: 600;
+  padding: 0.75rem 0;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-color: #374151 !important;
+  /* Gray-700 */
+}
+
+:deep(.fc-daygrid-day) {
+  transition: background-color 0.15s;
+}
+
+:deep(.fc-daygrid-day:hover) {
+  background-color: #1f2937;
+  /* Gray-800 */
+}
+
+:deep(.fc-daygrid-day-number) {
+  color: #d1d5db;
+  /* Gray-300 */
+  font-size: 0.875rem;
+  padding: 0.5rem;
+}
+
+:deep(.fc-day-other .fc-daygrid-day-number) {
+  color: #6b7280;
+  /* Gray-500 */
+}
+
+/* Today highlight */
+:deep(.fc-day-today) {
+  background-color: rgba(79, 70, 229, 0.1) !important;
+  /* Indigo with opacity */
+}
+
+/* Events styling */
+:deep(.fc-event) {
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0.125rem 0;
+  border-left-width: 3px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+:deep(.fc-event:hover) {
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+:deep(.fc-daygrid-event-dot) {
+  border-width: 5px;
+}
+
+/* Fix more+ link */
+:deep(.fc-daygrid-more-link) {
+  color: #93c5fd;
+  /* Blue-300 */
+  font-weight: 500;
+}
+
+/* For the current day */
+:deep(.fc-day-today .fc-daygrid-day-frame) {
+  border: 1px solid rgba(79, 70, 229, 0.5);
+  /* Indigo with opacity */
+}
+
 .calendar-container {
   min-height: 600px;
   height: 100%;
@@ -266,6 +405,10 @@ const getUniqueConferenceCount = () => {
   :deep(.fc-toolbar) {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  :deep(.fc-toolbar-title) {
+    font-size: 1rem !important;
   }
 }
 </style>
