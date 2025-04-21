@@ -326,26 +326,24 @@ async function saveEvent() {
           </div>
 
           <!-- Admin Actions -->
-          <div v-if="user?.role === 'admin'" class="border-t border-gray-700 pt-4">
-            <h4 class="text-lg font-medium text-indigo-300 mb-3">Admin Actions</h4>
-            <div class="flex space-x-3">
-              <button v-if="!editMode" @click="editEvent"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
-                Edit Event
-              </button>
-              <button v-else @click="saveEvent"
-                class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
-                Save
-              </button>
-              <button @click="deleteEvent"
-                class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-200 flex-1">
-                Delete
-              </button>
-            </div>
+          <div class="flex space-x-2">
+            <button v-show="!editMode" @click="editEvent"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              Edit Event
+            </button>
+            <button v-show="editMode" @click="saveEvent"
+              class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              Save
+            </button>
+            <button @click="deleteEvent"
+              class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              Delete
+            </button>
           </div>
 
+
           <button @click="closeModal"
-            class="w-full mt-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition duration-200">
+            class="w-full mt-1 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition duration-200">
             Close
           </button>
         </div>
