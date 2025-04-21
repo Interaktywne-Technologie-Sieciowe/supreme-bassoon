@@ -326,7 +326,7 @@ async function saveEvent() {
           </div>
 
           <!-- Admin Actions -->
-          <div class="flex space-x-2">
+          <div class="flex space-x-2" v-show="user?.role === 'admin'">
             <button v-show="!editMode" @click="editEvent"
               class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
               Edit Event
