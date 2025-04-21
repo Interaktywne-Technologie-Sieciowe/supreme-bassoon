@@ -20,10 +20,13 @@
             placeholder="Twoje hasło" />
         </div>
 
-        <button type="submit"
-          class="w-full py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl transition">
-          Zaloguj się
+        <button type="submit" :disabled="isLoading"
+          class="w-full py-2 px-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl transition grid place-items-center">
+          <span v-if="isLoading" class="spinner-border" role="status" aria-hidden="true"
+            style="width: 2rem; height: 2rem;"></span>
+          <span v-else>Zaloguj się</span>
         </button>
+
       </form>
 
       <p class="text-sm text-center text-white/80">
@@ -39,22 +42,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth' // Import the Pinia store
+import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const isLoading = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
 
 const login = async () => {
+  isLoading.value = true
   try {
     const response = await fetch('http://localhost:3000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include', // need for cookies
+      credentials: 'include',
       body: JSON.stringify({
         email: email.value,
         password: password.value,
@@ -66,12 +71,12 @@ const login = async () => {
     }
 
     const data = await response.json()
-    console.log('Sukces logowania:', data)
     authStore.setUser(data.user)
-    router.push("/calendar")
-    
+    router.push('/') // Redirect to home after successful login
   } catch (error) {
     console.error('Błąd podczas logowania:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 </script>

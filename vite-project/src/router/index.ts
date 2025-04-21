@@ -13,11 +13,6 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/calendar',
-      name: 'calendar',
-      component: CalendarView,
-    },
-    {
       path: '/AdminPanel',
       name: 'Adminpanel',
       component: AdminPanel,
