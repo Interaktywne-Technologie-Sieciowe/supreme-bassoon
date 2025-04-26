@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const { generatePassword } = require("../utils/passwordGenerator");
 const { sendEmail } = require("../utils/sendMail");
+const { createResetToken } = require('../models/resetTokenModel');
 
 // Reuse centralized error handler
 const handleErrors = (err, res) => {
@@ -48,26 +49,29 @@ exports.createUser = async (req, res) => {
         });
 
         const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
+
+        await createResetToken(newUser.id, token);
+
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
 
         const mailBody = `
-                       <p>Hi ${firstName}!</p>
-    <p>Your MeetMe account has been created.</p>
-    <p><strong>You need to set your password! </strong></p>
-    <p>Click the button below to do so:</p>
-    <p>
-        <a href="${resetLink}" style="
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-        ">
-            Change Password
-        </a>
-    </p>
-                        `;
+            <p>Hi ${firstName}!</p>
+            <p>Your MeetMe account has been created.</p>
+            <p><strong>You need to set your password! </strong></p>
+            <p>Click the button below to do so:</p>
+            <p>
+                <a href="${resetLink}" style="
+                    background-color: #007BFF;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    display: inline-block;
+                ">
+                    Change Password
+                </a>
+            </p>
+        `;
 
         await sendEmail(email, mailBody);
 
