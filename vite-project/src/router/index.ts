@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import AdminPanel from "../components/AdminPanel.vue";
 import PasswordChange from "../components/PasswordChange.vue";
+import PasswordForgot from "../components/PasswordForgot.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +22,11 @@ const router = createRouter({
       path: "/PasswordChange",
       name: "PasswordChange",
       component: PasswordChange,
+    },
+    {
+      path: "/PasswordForgot",
+      name: "PasswordForgot",
+      component: PasswordForgot,
     },
   ],
 });

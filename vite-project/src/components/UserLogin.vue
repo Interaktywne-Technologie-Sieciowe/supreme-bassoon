@@ -31,8 +31,9 @@
 
       <p class="text-sm text-center text-white/80">
         Nie pamiętasz hasła?
-        <a href="#" class="text-white hover:underline">Zresetuj je!</a>
+        <a href="#" class="text-white hover:underline" @click.prevent="resetView">Zresetuj je!</a>
       </p>
+
       <p class="text-sm text-center text-white/80">
         <a href="#" class="text-white hover:underline" @click.prevent="guestLogin">
           Dostęp bez logowania
@@ -53,6 +54,7 @@ const password = ref('')
 const isLoading = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
+
 const guestLogin = () => {
   const guestUser = {
     id: 'guest',
@@ -97,4 +99,9 @@ const login = async () => {
     isLoading.value = false
   }
 }
+
+const resetView = () => {
+  router.push('/PasswordForgot')
+}
+
 </script>
