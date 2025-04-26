@@ -37,7 +37,6 @@ exports.createUser = async (req, res) => {
 
     try {
         const rawPassword = generatePassword(10);
-        console.log(rawPassword); //Żeby można było się jakoś zalogować :p
         const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
         const newUser = await userModel.create({
@@ -54,8 +53,8 @@ exports.createUser = async (req, res) => {
         const mailBody = `
                        <p>Hi ${firstName}!</p>
     <p>Your MeetMe account has been created.</p>
-    <p><strong>Your temporary password:</strong> ${rawPassword}</p>
-    <p>If you want to change it now, click the button below:</p>
+    <p><strong>You need to set your password! </strong></p>
+    <p>Click the button below to do so:</p>
     <p>
         <a href="${resetLink}" style="
             background-color: #007BFF;
