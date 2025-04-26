@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.sendEmail = async (toEmail, messageBody) => {
+exports.sendEmail = async (toEmail, messageBody, subj) => {
   const sender = {
     address: 'its101its@wp.pl',
     name: 'noreply@MeetMe.com',
@@ -20,7 +20,7 @@ exports.sendEmail = async (toEmail, messageBody) => {
   const mailOptions = {
     from: sender,
     to: recipients,
-    subject: 'Welcome to MeetMe!',
+    subject: subj,
     html: messageBody,
     category: 'Integration Test',
   };

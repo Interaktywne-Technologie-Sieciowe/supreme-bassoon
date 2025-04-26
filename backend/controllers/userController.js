@@ -50,7 +50,7 @@ exports.createUser = async (req, res) => {
 
         const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
-
+        const subj = 'Welcome to MeetMe!';
         const mailBody = `
                        <p>Hi ${firstName}!</p>
     <p>Your MeetMe account has been created.</p>
@@ -70,7 +70,7 @@ exports.createUser = async (req, res) => {
     </p>
                         `;
 
-        await sendEmail(email, mailBody);
+        await sendEmail(email, mailBody,subj);
 
         res.status(201).json(newUser);
     } catch (err) {
@@ -96,4 +96,40 @@ exports.deleteUser = async (req, res) => {
     } catch (err) {
         handleErrors(err, res);
     }
+};
+
+
+exports.resetPassword = async (req, res) => {
+    const {email } = req.body;
+console.log(email);
+    if (!email) {
+        return res.status(400).json({ error: "Brakuje wymaganych danych" });
+    }
+
+    try{
+        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
+        const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
+        const subj='Zmiana hasła do konta MeetMe';
+        const mailBody = `
+                      
+    <p>Twój link do zmiany hasła:</p>
+    <p>
+        <a href="${resetLink}" style="
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        ">
+            Resetuj hasło
+        </a>
+    </p>
+                        `;
+   
+         await sendEmail(email, mailBody,subj);
+         res.status(200);   
+         } catch (err) {
+         handleErrors(err, res);
+        }
 };
