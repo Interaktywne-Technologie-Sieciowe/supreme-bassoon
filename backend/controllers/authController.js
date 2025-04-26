@@ -3,6 +3,7 @@ const { SECRET_KEY } = require("../utils/auth");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const { generateTokenForUser } = require("../utils/auth");
+const { checkIfTokenIsValid, markTokenUsed } = require('../models/resetTokenModel'); 
 
 // Optional shared error handler
 const handleErrors = (err, res) => {
@@ -64,23 +65,32 @@ exports.resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-        return res.status(400).json({ error: "Missing token or new password" });
+        return res.status(400).json({ error: "Missing token or new password." });
     }
 
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
         const { email } = decoded;
 
+        const tokenRecord = await checkIfTokenIsValid(token);
+        if (!tokenRecord) {
+            return res.status(400).json({ error: "Invalid or already used token." });
+        }
+
         const user = await userModel.findByEmail(email);
-        if (!user) return res.status(404).json({ error: "User does not exist" });
+        if (!user) {
+            return res.status(404).json({ error: "User does not exist." });
+        }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await userModel.updatePasswordByEmail(email, hashedPassword);
 
-        res.json({ message: "Password changed succesfully" });
+        await markTokenUsed(token);
+
+        res.json({ message: "Password changed successfully." });
+
     } catch (err) {
-        console.error("Error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        return res.status(401).json({ error: "Invalid or expired token." });
     }
 };
 
