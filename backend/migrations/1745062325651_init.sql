@@ -21,6 +21,16 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    PASSWORD_RESET_TOKENS (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        token TEXT NOT NULL,
+        used BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE TABLE
     CONFERENCE (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         name VARCHAR(255) NOT NULL,
