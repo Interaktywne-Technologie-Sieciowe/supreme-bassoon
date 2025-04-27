@@ -104,18 +104,22 @@ exports.deleteUser = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     const {email } = req.body;
-console.log(email);
+
     if (!email) {
         return res.status(400).json({ error: "Brakuje wymaganych danych" });
     }
 
     try{
         const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
+
+        const user =await userModel.findByEmail(email);
+        await createResetToken(user.id, token);
+
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
         const subj='Zmiana hasła do konta MeetMe';
         const mailBody = `
-                      
-    <p>Twój link do zmiany hasła:</p>
+                   <p>Hej ${user.name}!</p>   
+    <p>Oto twój link do zmiany hasła:</p>
     <p>
         <a href="${resetLink}" style="
             background-color: #007BFF;
