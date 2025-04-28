@@ -17,7 +17,6 @@ const editMode = ref(false)
 const selectedEvent = ref<Event | null>(null)
 const editableEvent = ref({
   name: '',
-  conference_name: '',
   location: '',
   start_date: '',
   end_date: ''
@@ -30,7 +29,6 @@ function openModal(event: Event) {
 
   editableEvent.value = {
     name: event.name,
-    conference_name: event.conference_name,
     location: event.location,
     start_date: event.start_date.slice(0, 16), // format for datetime-local input
     end_date: event.end_date.slice(0, 16)
@@ -140,7 +138,7 @@ const formatDate = (startStr: string, endStr: string) => {
           </div>
 
           <!-- Admin Buttons -->
-          <div v-show="user?.role === 'admin'" class="mt-6 flex justify-end gap-3">
+          <div v-show="user?.role === 'admin'" class="mt-2 flex justify-center gap-3">
             <button @click="openModal(event)"
               class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
               <Pencil class="w-4 h-4" /> Edytuj
@@ -158,7 +156,7 @@ const formatDate = (startStr: string, endStr: string) => {
 
     <!-- Modal -->
     <div v-if="isModalOpen"
-      class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
+      class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold text-gray-800">Edytuj wydarzenie</h2>
@@ -176,13 +174,6 @@ const formatDate = (startStr: string, endStr: string) => {
             <input v-model="editableEvent.name"
               class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
               placeholder="Nazwa wydarzenia" />
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Konferencja</label>
-            <input v-model="editableEvent.conference_name"
-              class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-              placeholder="Konferencja" />
           </div>
 
           <div class="space-y-2">
