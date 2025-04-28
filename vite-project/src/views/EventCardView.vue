@@ -10,7 +10,7 @@ const props = defineProps<{
   events: Event[]
 }>()
 
-const eventsList = ref([...props.events])
+const eventsList = computed(() => [...props.events])
 
 const isModalOpen = ref(false)
 const editMode = ref(false)
