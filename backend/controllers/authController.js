@@ -3,7 +3,7 @@ const { SECRET_KEY } = require("../utils/auth");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const { generateTokenForUser } = require("../utils/auth");
-const { checkIfTokenIsValid, markTokenUsed } = require('../models/resetTokenModel'); 
+const { checkIfTokenIsValid, markTokenUsed } = require("../models/resetTokenModel");
 
 // Optional shared error handler
 const handleErrors = (err, res) => {
@@ -88,7 +88,6 @@ exports.resetPassword = async (req, res) => {
         await markTokenUsed(token);
 
         res.json({ message: "Password changed successfully." });
-
     } catch (err) {
         return res.status(401).json({ error: "Invalid or expired token." });
     }
@@ -127,6 +126,9 @@ exports.refreshLogin = async (req, res) => {
             },
         });
     } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ error: "Token expired" });
+        }
         console.error("Error refreshing login:", err);
         res.status(500).json({ error: "Internal server error" });
     }
