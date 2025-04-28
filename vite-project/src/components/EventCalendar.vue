@@ -112,7 +112,6 @@ function editEvent() {
   editMode.value = true
   editableEvent.value = {
     name: selectedEvent.value.extendedProps.name,
-    conferenceName: selectedEvent.value.extendedProps.conferenceName,
     start: selectedEvent.value.start.toISOString().slice(0, 16),
     end: selectedEvent.value.end.toISOString().slice(0, 16),
     location: selectedEvent.value.extendedProps.location
@@ -182,53 +181,63 @@ async function deleteEvent() {
 
 <template>
   <div>
-    <div class="container mx-auto p-4 md:p-6">
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+    <div class="container mx-auto p-4 md:p-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
         <!-- Calendar -->
-        <div class="lg:col-span-3 bg-white rounded shadow-lg p-4 overflow-hidden border border-gray-200">
+        <div class="lg:col-span-3 bg-white rounded-xl shadow-lg p-6 overflow-hidden border border-gray-100">
           <FullCalendar :options="calendarOptions" class="calendar-container" />
         </div>
 
         <!-- Sidebar -->
-        <div class="lg:col-span-1 space-y-6">
+        <div class="lg:col-span-1 space-y-8">
           <!-- Instructions Panel -->
-          <div class="bg-white rounded-xl p-4 shadow-md border border-gray-200">
-            <h3 class="text-xl font-semibold text-indigo-600 mb-3">
-              <span class="mr-2">📋</span>Calendar Guide
+          <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <h3 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Calendar Guide
             </h3>
-            <ul class="space-y-2 text-gray-700 text-sm">
-              <li class="flex items-start">
-                <span class="text-indigo-500 mr-2">•</span>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-center">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
                 <span>Click on any event to view details</span>
               </li>
-              <li class="flex items-start">
-                <span class="text-indigo-500 mr-2">•</span>
+              <li class="flex items-center">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
                 <span>Use the arrows to navigate between months</span>
               </li>
-              <li class="flex items-start">
-                <span class="text-indigo-500 mr-2">•</span>
+              <li class="flex items-center">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
                 <span>Switch between month and week views</span>
               </li>
-              <li class="flex items-start">
-                <span class="text-indigo-500 mr-2">•</span>
+              <li class="flex items-center">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
                 <span>Colors represent different conferences</span>
               </li>
             </ul>
           </div>
 
           <!-- Stats Panel -->
-          <div class="bg-white rounded-xl p-4 shadow-md border border-gray-200">
-            <h3 class="text-xl font-semibold text-indigo-600 mb-3">
-              <span class="mr-2">📊</span>Calendar Stats
+          <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <h3 class="text-xl font-semibold text-indigo-600 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Calendar Stats
             </h3>
             <div class="grid grid-cols-2 gap-4">
-              <div class="bg-gray-100 p-3 rounded-lg text-center">
+              <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl text-center shadow-sm">
                 <p class="text-2xl font-bold text-indigo-600">{{ events.length }}</p>
-                <p class="text-sm text-gray-500">Total Events</p>
+                <p class="text-sm text-gray-500 font-medium">Total Events</p>
               </div>
-              <div class="bg-gray-100 p-3 rounded-lg text-center">
+              <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl text-center shadow-sm">
                 <p class="text-2xl font-bold text-indigo-600">{{ getUniqueConferenceCount() }}</p>
-                <p class="text-sm text-gray-500">Conferences</p>
+                <p class="text-sm text-gray-500 font-medium">Conferences</p>
               </div>
             </div>
           </div>
@@ -239,10 +248,11 @@ async function deleteEvent() {
     <!-- Event Details Modal -->
     <div v-if="isModalOpen"
       class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 border border-gray-200">
-        <div class="flex justify-between items-center mb-4">
+      <div
+        class="bg-white rounded shadow-2xl w-full max-w-md p-6 border-1 border-slate-500 transform transition-all duration-300 scale-100">
+        <div class="flex justify-between items-center mb-5">
           <h2 class="text-2xl font-bold text-indigo-600">Event Details</h2>
-          <button @click="closeModal" class="text-gray-500 hover:text-gray-700 transition duration-200">
+          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -250,62 +260,94 @@ async function deleteEvent() {
           </button>
         </div>
 
-        <div v-if="selectedEvent" class="space-y-4">
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <div v-if="editMode">
-              <input v-model="editableEvent.name"
-                class="w-full mb-2 p-2 rounded bg-white border border-gray-300 text-gray-800" />
-              <input v-model="editableEvent.conferenceName"
-                class="w-full mb-2 p-2 rounded bg-white border border-gray-300 text-gray-800" />
-              <input type="datetime-local" v-model="editableEvent.start"
-                class="w-full mb-2 p-2 rounded bg-white border border-gray-300 text-gray-800" />
-              <input type="datetime-local" v-model="editableEvent.end"
-                class="w-full mb-2 p-2 rounded bg-white border border-gray-300 text-gray-800" />
-              <input v-model="editableEvent.location"
-                class="w-full p-2 rounded bg-white border border-gray-300 text-gray-800" />
+        <div v-if="selectedEvent" class="space-y-5">
+          <div class="bg-gray-50 p-5 rounded shadow-inner border">
+            <div v-if="editMode" class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
+                <input v-model="editableEvent.name"
+                  class="w-full p-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date & Time</label>
+                <input type="datetime-local" v-model="editableEvent.start"
+                  class="w-full p-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">End Date & Time</label>
+                <input type="datetime-local" v-model="editableEvent.end"
+                  class="w-full p-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <input v-model="editableEvent.location"
+                  class="w-full p-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
             </div>
             <div v-else>
               <h3 class="text-xl font-semibold mb-2">{{ selectedEvent.extendedProps.name }}</h3>
-              <p class="text-indigo-600 text-sm mb-2">{{ selectedEvent.extendedProps.conferenceName }}</p>
-              <div class="space-y-2 mt-4 text-gray-700">
-                <div class="flex">
-                  <span class="font-semibold w-20">Start:</span>
-                  <span>{{ formatDateTime(selectedEvent.startStr) }}</span>
+              <p class="text-indigo-600 font-medium mb-4">{{ selectedEvent.extendedProps.conferenceName }}</p>
+              <div class="space-y-3 mt-5 text-gray-700">
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-3" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <div>
+                    <span class="font-medium">Start:</span>
+                    <span class="ml-2">{{ formatDateTime(selectedEvent.startStr) }}</span>
+                  </div>
                 </div>
-                <div class="flex">
-                  <span class="font-semibold w-20">End:</span>
-                  <span>{{ formatDateTime(selectedEvent.endStr) }}</span>
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-3" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <span class="font-medium">End:</span>
+                    <span class="ml-2">{{ formatDateTime(selectedEvent.endStr) }}</span>
+                  </div>
                 </div>
-                <div class="flex">
-                  <span class="font-semibold w-20">Location:</span>
-                  <span>{{ selectedEvent.extendedProps.location }}</span>
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-3" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <span class="font-medium">Location:</span>
+                    <span class="ml-2">{{ selectedEvent.extendedProps.location }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Admin Actions -->
-          <div class="flex space-x-2" v-show="user?.role === 'admin'">
+          <div class="flex" v-show="user?.role === 'admin'">
             <button v-show="!editMode" @click="editEvent"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              class="m-1 rounded bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white py-3 px-4 transition shadow-sm flex-1 font-medium">
               Edit
             </button>
             <button v-show="editMode" @click="saveEvent"
-              class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              class="m-1 rounded bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white py-3 px-4 transition shadow-sm flex-1 font-medium">
               Save
             </button>
             <button @click="deleteEvent"
-              class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-200 flex-1 mx-1">
+              class="m-1 rounded bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-3 px-4 transition shadow-sm flex-1 font-medium">
               Delete
             </button>
           </div>
 
           <button @click="closeModal"
-            class="w-full mt-2 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded transition duration-200">
+            class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition font-medium border-1 border-slate-400">
             Close
           </button>
         </div>
-
       </div>
     </div>
   </div>
@@ -325,70 +367,64 @@ async function deleteEvent() {
 }
 
 :deep(.fc-toolbar-title) {
-  color: #c4b5fd;
-  /* Indigo-300 */
-  font-size: 1.25rem !important;
+  color: #6366f1;
+  /* Indigo-500 */
+  font-size: 1.5rem !important;
   font-weight: 600;
 }
 
 :deep(.fc-button) {
-  background-color: #4f46e5 !important;
-  /* Indigo-600 */
+  background: linear-gradient(to right, #4f46e5, #4338ca) !important;
+  margin: 0.1618rem;
   border-color: #4338ca !important;
-  /* Indigo-700 */
   color: white !important;
   font-weight: 500;
   text-transform: capitalize;
-  padding: 0.375rem 0.75rem;
-  transition: all 0.2s;
   cursor: pointer;
-}
-
-:deep(.fc-button:hover) {
-  background-color: #4338ca !important;
-  /* Indigo-700 */
-  border-color: #3730a3 !important;
-  /* Indigo-800 */
-}
-
-:deep(.fc-button-active) {
-  background-color: #3730a3 !important;
-  /* Indigo-800 */
-  border-color: #312e81 !important;
-  /* Indigo-900 */
 }
 
 :deep(.fc-daygrid-day) {
   transition: background-color 0.15s;
 }
 
+:deep(.fc-daygrid-day-frame) {
+  min-height: 100px;
+}
+
+:deep(.fc-col-header-cell) {
+  background-color: #f3f4f6;
+  /* Gray-100 */
+  padding: 8px 0;
+}
+
 /* Events styling */
 :deep(.fc-event) {
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.25rem;
   font-size: 0.75rem;
   font-weight: 500;
   margin: 0.125rem 0;
   border-left-width: 3px;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 :deep(.fc-event:hover) {
   cursor: pointer;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
-
 
 /* Fix more+ link */
 :deep(.fc-daygrid-more-link) {
-  color: #93c5fd;
-  /* Blue-300 */
+  color: #6366f1;
+  /* Indigo-500 */
   font-weight: 500;
+  background-color: rgba(99, 102, 241, 0.1);
+  padding: 2px 5px;
+  border-radius: 4px;
 }
 
 .calendar-container {
-  min-height: 600px;
+  min-height: 650px;
   height: 100%;
 }
 
@@ -396,11 +432,15 @@ async function deleteEvent() {
 @media (max-width: 768px) {
   :deep(.fc-toolbar) {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   :deep(.fc-toolbar-title) {
-    font-size: 1rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  :deep(.fc-daygrid-day-frame) {
+    min-height: 70px;
   }
 }
 </style>
