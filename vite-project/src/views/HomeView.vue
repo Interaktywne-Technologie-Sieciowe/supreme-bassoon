@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Login from '../components/UserLogin.vue'
-import CalendarView from './CalendarView.vue'
+import CalendarView from '../components/EventCalendar.vue'
 import CardView from './EventCardView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { ref, computed, onMounted } from 'vue'
@@ -36,7 +36,40 @@ onMounted(async () => {
     loading.value = false
   }
 })
+async function deleteEvent(id: string) {
+  if (confirm('Are you sure you want to delete this event?')) {
+    try {
+      await fetch(`http://localhost:3000/api/events/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
 
+      events.value = events.value.filter(event => event.id !== id)
+    } catch (err) {
+      console.error('Error deleting event:', err)
+    }
+  }
+}
+async function toggleBookmark(event: Event) {
+  const isNowBookmarked = !event.bookmarked
+  try {
+    if (isNowBookmarked) {
+      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } else {
+      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+    }
+
+    event.bookmarked = isNowBookmarked
+  } catch (error) {
+    console.error('Failed to toggle bookmark:', error)
+  }
+}
 </script>
 
 <template>
@@ -65,8 +98,9 @@ onMounted(async () => {
 
       <!-- Content views -->
       <div v-else class="transition-opacity duration-300">
-        <CalendarView v-if="calendarMode" :events="events" />
-        <CardView v-else :events="events" />
+        <CalendarView v-if="calendarMode" :events="events" @delete-event="deleteEvent"
+          @toggle-bookmark="toggleBookmark" />
+        <CardView v-else :events="events" @delete-event="deleteEvent" @toggle-bookmark="toggleBookmark" />
       </div>
     </div>
   </main>
