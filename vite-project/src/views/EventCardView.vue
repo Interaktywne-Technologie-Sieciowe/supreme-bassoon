@@ -3,14 +3,25 @@ import { MapPin, Calendar, Landmark, Pencil, Trash2 } from 'lucide-vue-next'
 import type { Event } from '@/types/event'
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth' // << Import your auth store
+import { Heart, HeartOff } from 'lucide-vue-next'
 
 const auth = useAuthStore()
 const user = auth.user
 const props = defineProps<{
   events: Event[]
 }>()
+const emit = defineEmits<{
+  (e: 'delete-event', id: string): void,
+  (e: 'toggle-bookmark', event: Event): void
+}>()
 
-const eventsList = ref([...props.events])
+function handleDelete(id: string) {
+  emit('delete-event', id)
+}
+
+function handleBookmark(event: Event) {
+  emit('toggle-bookmark', event)
+}
 
 const isModalOpen = ref(false)
 const editMode = ref(false)
@@ -62,30 +73,14 @@ async function saveEvent() {
     const updated = result.event
 
     // Update the event locally in the array
-    const idx = eventsList.value.findIndex(e => e.id === selectedEvent.value!.id)
+    const idx = props.events.findIndex(e => e.id === selectedEvent.value!.id)
     if (idx !== -1) {
-      eventsList.value[idx] = { ...eventsList.value[idx], ...updated }
+      props.events[idx] = { ...props.events[idx], ...updated }
     }
 
     closeModal()
   } catch (err) {
     console.error('Error updating event:', err)
-  }
-}
-
-async function deleteEvent(id: string) {
-  if (confirm('Are you sure you want to delete this event?')) {
-    try {
-      await fetch(`http://localhost:3000/api/events/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      })
-
-      eventsList.value = eventsList.value.filter(event => event.id !== id)
-      closeModal()
-    } catch (err) {
-      console.error('Error deleting event:', err)
-    }
   }
 }
 
@@ -116,8 +111,24 @@ const formatDate = (startStr: string, endStr: string) => {
 <template>
   <div class="container mx-auto p-8">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div v-for="event in eventsList" :key="event.id"
-        class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col transition duration-300 hover:shadow-xl hover:translate-y-1">
+      <div v-for="event in events" :key="event.id"
+        class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col transition duration-300 hover:shadow-xl hover:translate-y-1 relative">
+
+        <!-- Bookmark button - redesigned as an elegant ribbon style -->
+        <button @click="handleBookmark(event)" class="absolute top-0 right-5 z-10 transition-all duration-300 transform"
+          :class="[event.bookmarked ? 'text-red-500' : 'text-gray-400']">
+          <div class="relative">
+            <div class="w-8 h-10 overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-full bg-white shadow-md"
+                :class="[event.bookmarked ? 'bg-red-50' : 'bg-gray-50']"
+                style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);">
+              </div>
+            </div>
+            <Heart class="absolute top-2 left-1.5 w-5 h-5 transition-all duration-300"
+              :class="[event.bookmarked ? 'fill-current' : 'stroke-current fill-transparent']"
+              :strokeWidth="event.bookmarked ? 0 : 2" />
+          </div>
+        </button>
 
         <div class="p-5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white">
           <h4 class="font-semibold text-lg">{{ event.name }}</h4>
@@ -143,7 +154,7 @@ const formatDate = (startStr: string, endStr: string) => {
               class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
               <Pencil class="w-4 h-4" /> Edytuj
             </button>
-            <button @click="deleteEvent(event.id)"
+            <button @click="handleDelete(event.id)"
               class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
               <Trash2 class="w-4 h-4" /> Usuń
             </button>
