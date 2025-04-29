@@ -29,17 +29,27 @@ onMounted(async () => {
       bookmarksRes.json()
     ])
 
-    const bookmarkedIds = new Set(bookmarksData.map((b: any) => b.id))
-    events.value = eventData.map((e: Event) => ({
-      ...e,
-      bookmarked: bookmarkedIds.has(e.id)
-    }))
+    if (Array.isArray(bookmarksData)) {
+      const bookmarkedIds = new Set(bookmarksData.map((b: any) => b.id))
+      events.value = eventData.map((e: Event) => ({
+        ...e,
+        bookmarked: bookmarkedIds.has(e.id)
+      }))
+    } else {
+      // Handle case where bookmarksData is not an array (fallback logic if needed)
+      console.warn('Bookmarks data is not an array. Defaulting to empty list.')
+      events.value = eventData.map((e: Event) => ({
+        ...e,
+        bookmarked: false
+      }))
+    }
   } catch (error) {
-    console.error('Failed to load events or bookmarks:', error)
+    console.error('Error fetching data:', error)
   } finally {
     loading.value = false
   }
 })
+
 async function deleteEvent(id: string) {
   if (confirm('Are you sure you want to delete this event?')) {
     try {
