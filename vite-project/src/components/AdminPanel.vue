@@ -1,112 +1,117 @@
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center px-4 py-10">
-    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-8 text-gray-800 space-y-8">
-      <h2 class="text-3xl font-bold text-center">Panel administratora</h2>
+  <div class="container mx-auto p-4 md:p-6 text-gray-800">
+    <div class="bg-white shadow-lg rounded-xl p-5 md:p-6 space-y-8">
 
-      <!-- Switch Panel -->
-      <div class="flex justify-center gap-6">
-        <button @click="activeTab = 'users'" :class="buttonTabClass('users')">
-          Użytkownicy
-        </button>
-        <button @click="activeTab = 'conferences'" :class="buttonTabClass('conferences')">
-          Konferencje
-        </button>
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <h2 class="text-2xl font-bold text-gray-900">Panel Administratora</h2>
+        <div class="flex items-center gap-3">
+          <button @click="activeTab = 'users'"
+            :class="['px-4 py-2 rounded-lg font-medium transition text-sm', activeTab === 'users' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+            Użytkownicy
+          </button>
+          <button @click="activeTab = 'conferences'"
+            :class="['px-4 py-2 rounded-lg font-medium transition text-sm', activeTab === 'conferences' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+            Konferencje
+          </button>
+        </div>
       </div>
 
-      <!-- Conferences -->
-      <div v-if="activeTab === 'conferences'" class="space-y-6">
-        <!-- Conference List -->
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Lista konferencji</h3>
-          <div v-if="isLoadingConferences" class="text-gray-500 italic">Ładowanie konferencji...</div>
-          <div v-else-if="conferences.length">
-            <ul class="space-y-2">
-              <li v-for="(conf, index) in conferences" :key="conf.id"
-                class="bg-white shadow rounded-xl px-4 py-3 flex justify-between items-center border border-gray-200">
-                <div>
-                  <p class="font-semibold">{{ conf.name || 'Konferencja' }}</p>
-                  <p class="text-gray-500 text-sm">ID: {{ conf.id }}</p>
-                </div>
-                <button @click="handleDeleteConference(index, conf.id)"
-                  class="text-sm text-red-500 hover:text-red-700 transition">
-                  Usuń
-                </button>
-              </li>
-            </ul>
+      <!-- USERS -->
+      <div v-if="activeTab === 'users'" class="space-y-6">
+        <form @submit.prevent="addUser" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input v-model="firstName" type="text" placeholder="Imię" required
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
+            <input v-model="lastName" type="text" placeholder="Nazwisko" required
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
+            <input v-model="email" type="email" placeholder="Email" required
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
           </div>
-          <div v-else class="text-gray-500 italic">Brak konferencji</div>
+          <button :disabled="isAdding"
+            class="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition shadow-sm">
+            <span v-if="isAdding">Dodawanie...</span>
+            <span v-else>Dodaj użytkownika</span>
+          </button>
+        </form>
+
+        <p v-if="addSuccess" class="text-green-500 text-center font-medium text-sm">Użytkownik dodany pomyślnie</p>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-gray-900">Lista użytkowników</h3>
+            <span class="text-xs text-gray-500">{{ users.length || 0 }} użytkowników</span>
+          </div>
+
+          <div v-if="isFetching" class="italic text-gray-500 text-sm">Ładowanie użytkowników...</div>
+          <ul v-else-if="users.length" class="space-y-1.5">
+            <li v-for="(user, index) in users" :key="index"
+              class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 flex justify-between items-center shadow-sm hover:bg-gray-100 transition-colors">
+              <div>
+                <p class="font-medium text-sm">{{ user.firstName }} {{ user.lastName }}</p>
+                <p class="text-gray-500 text-xs">{{ user.email }}</p>
+              </div>
+              <button @click="deleteUserFromDb(index, user.id)"
+                class="text-xs px-2 py-1 rounded text-red-600 hover:bg-red-50 hover:text-red-700 font-medium transition">
+                Usuń
+              </button>
+            </li>
+          </ul>
+          <div v-else class="italic text-gray-500 text-sm py-2">Brak użytkowników</div>
+        </div>
+      </div>
+
+      <!-- CONFERENCES -->
+      <div v-if="activeTab === 'conferences'" class="space-y-8">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-gray-900">Lista konferencji</h3>
+            <span class="text-xs text-gray-500">{{ conferences.length || 0 }} konferencji</span>
+          </div>
+
+          <div v-if="isLoadingConferences" class="italic text-gray-500 text-sm">Ładowanie konferencji...</div>
+          <ul v-else-if="conferences.length" class="space-y-1.5">
+            <li v-for="(conf, index) in conferences" :key="conf.id"
+              class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 flex justify-between items-center shadow-sm hover:bg-gray-100 transition-colors">
+              <div>
+                <p class="font-medium text-sm">{{ conf.name || 'Konferencja' }}</p>
+                <p class="text-gray-500 text-xs">ID: {{ conf.id }}</p>
+              </div>
+              <button @click="deleteConference(index, conf.id)"
+                class="text-xs px-2 py-1 rounded text-red-600 hover:bg-red-50 hover:text-red-700 font-medium transition">
+                Usuń
+              </button>
+            </li>
+          </ul>
+          <div v-else class="italic text-gray-500 text-sm py-2">Brak konferencji</div>
         </div>
 
-        <!-- Export Section -->
-        <div class="space-y-4">
-          <h3 class="text-xl font-semibold">Import/Export konferencji</h3>
-          <div class="flex items-center gap-2">
+        <div class="pt-4 border-t border-gray-200">
+          <h3 class="text-lg font-semibold mb-3 text-gray-900">Import / Export konferencji</h3>
+
+          <div class="flex flex-col sm:flex-row gap-3 mb-4">
             <input v-model="exportId" type="text" placeholder="ID konferencji do eksportu"
-              class="flex-1 px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400" />
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
             <button @click="exportConference"
-              class="px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition">
+              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition text-sm whitespace-nowrap">
               Eksportuj
             </button>
           </div>
 
-          <form @submit.prevent="importConference" class="space-y-2">
-            <input type="file" accept="application/json" @change="handleFileChange" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
-              file:rounded-xl file:border-0 file:text-sm file:font-semibold
-              file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200" />
+          <form @submit.prevent="importConference" class="flex flex-col sm:flex-row gap-3">
+            <input type="file" accept="application/json" @change="handleFileChange" class="flex-1 block w-full text-sm text-gray-700 file:mr-3 file:py-1.5 file:px-3
+                   file:rounded-lg file:border-0 file:text-sm file:font-medium
+                   file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer" />
             <button type="submit"
-              class="w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-xl transition">
+              class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition shadow-sm text-sm whitespace-nowrap">
               Importuj
             </button>
           </form>
         </div>
       </div>
 
-      <!-- Users -->
-      <div v-if="activeTab === 'users'" class="space-y-6">
-        <form @submit.prevent="addUser" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input v-model="firstName" type="text" placeholder="Imię" required
-              class="px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400" />
-            <input v-model="lastName" type="text" placeholder="Nazwisko" required
-              class="px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400" />
-            <input v-model="email" type="email" placeholder="Email" required
-              class="px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400" />
-          </div>
-          <button :disabled="isAdding"
-            class="w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition disabled:opacity-50">
-            <span v-if="isAdding">Dodawanie...</span>
-            <span v-else>Dodaj użytkownika</span>
-          </button>
-        </form>
-
-        <p v-if="addSuccess" class="text-green-600 text-center">Użytkownik dodany pomyślnie ✅</p>
-
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Lista użytkowników</h3>
-          <div v-if="isFetching" class="text-gray-500 italic">Ładowanie użytkowników...</div>
-          <div v-else-if="users.length">
-            <ul class="space-y-2">
-              <li v-for="(user, index) in users" :key="index"
-                class="bg-white shadow rounded-xl px-4 py-3 flex justify-between items-center border border-gray-200">
-                <div>
-                  {{ user.firstName }} {{ user.lastName }} —
-                  <span class="text-gray-500">{{ user.email }}</span>
-                </div>
-                <button @click="deleteUserFromDb(index, user.id)"
-                  class="text-sm text-red-500 hover:text-red-700 transition">
-                  Usuń
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div v-else class="text-gray-500 italic">Brak użytkowników</div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
@@ -291,6 +296,7 @@ const importConference = async () => {
     if (!response.ok) throw new Error('Błąd przy imporcie konferencji')
 
     alert('Import zakończony sukcesem ✅')
+    fetchConferences()
   } catch (error) {
     console.error(error)
     alert('Nie udało się zaimportować konferencji')
@@ -298,15 +304,4 @@ const importConference = async () => {
 }
 const activeTab = ref('users')
 
-const buttonTabClass = (tab: any) =>
-  `px-6 py-2 rounded-full font-semibold transition ${activeTab.value === tab
-    ? 'bg-white text-indigo-600 shadow'
-    : 'bg-indigo-100 text-indigo-700 hover:bg-white hover:shadow'
-  }`
-
-// Example wrapper for refreshing after deletion
-async function handleDeleteConference(index: number, id: string) {
-  await deleteConference(index, id)
-  await fetchConferences() // Refresh list
-}
 </script>
