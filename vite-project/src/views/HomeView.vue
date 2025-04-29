@@ -5,6 +5,7 @@ import CardView from './EventCardView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { ref, computed, onMounted } from 'vue'
 import type { Event } from '@/types/event'
+import type { User } from '@/types/user'
 
 const auth = useAuthStore()
 const isLoggedIn = computed(() => !!auth.user)
@@ -64,7 +65,16 @@ async function deleteEvent(id: string) {
     }
   }
 }
+function canBookmark(user: User | null) {
+  return user && user.role !== 'guest';
+}
+
 async function toggleBookmark(event: Event) {
+  if (!canBookmark(auth.user)) {
+    alert("You must be logged in with a full account to like events!");
+    return;
+  }
+
   const isNowBookmarked = !event.bookmarked
   try {
     if (isNowBookmarked) {
