@@ -73,7 +73,7 @@ exports.createUser = async (req, res) => {
             </p>
         `;
 
-        await sendEmail(email, mailBody,subj);
+        await sendEmail(email, mailBody, subj);
 
         res.status(201).json(newUser);
     } catch (err) {
@@ -103,20 +103,23 @@ exports.deleteUser = async (req, res) => {
 
 
 exports.resetPassword = async (req, res) => {
-    const {email } = req.body;
+    const { email } = req.body;
 
     if (!email) {
         return res.status(400).json({ error: "Brakuje wymaganych danych" });
     }
 
-    try{
-        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
+    try {
 
-        const user =await userModel.findByEmail(email);
+        const user = await userModel.findByEmail(email);
+        if (!user) {
+            return res.status(404).json({ message: "Użytkownik o takim mailu nie istnieje" });
+        }
+        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "15m" });
         await createResetToken(user.id, token);
 
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
-        const subj='Zmiana hasła do konta MeetMe';
+        const subj = 'Zmiana hasła do konta MeetMe';
         const mailBody = `
                    <p>Hej ${user.name}!</p>   
     <p>Oto twój link do zmiany hasła:</p>
@@ -133,10 +136,10 @@ exports.resetPassword = async (req, res) => {
         </a>
     </p>
                         `;
-   
-         await sendEmail(email, mailBody,subj);
-         res.status(200);   
-         } catch (err) {
-         handleErrors(err, res);
-        }
+
+        await sendEmail(email, mailBody, subj);
+        res.status(200).json({ Successmessage: "Link do resetowania hasła został wysłany na podany adres e-mail." });
+    } catch (err) {
+        handleErrors(err, res);
+    }
 };
