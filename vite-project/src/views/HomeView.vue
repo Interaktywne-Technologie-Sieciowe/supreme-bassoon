@@ -16,15 +16,27 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/events')
-    const data: Event[] = await response.json()
-    events.value = data
+    const [eventsRes, bookmarksRes] = await Promise.all([
+      fetch('http://localhost:3000/api/events'),
+      fetch('http://localhost:3000/api/bookmarks', { credentials: 'include' })
+    ])
+    const [eventData, bookmarksData] = await Promise.all([
+      eventsRes.json(),
+      bookmarksRes.json()
+    ])
+
+    const bookmarkedIds = new Set(bookmarksData.map((b: any) => b.id))
+    events.value = eventData.map((e: Event) => ({
+      ...e,
+      bookmarked: bookmarkedIds.has(e.id)
+    }))
   } catch (error) {
-    console.error('Failed to load events:', error)
+    console.error('Failed to load events or bookmarks:', error)
   } finally {
     loading.value = false
   }
 })
+
 </script>
 
 <template>

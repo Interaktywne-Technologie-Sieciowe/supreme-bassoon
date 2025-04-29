@@ -3,6 +3,7 @@ import { MapPin, Calendar, Landmark, Pencil, Trash2 } from 'lucide-vue-next'
 import type { Event } from '@/types/event'
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth' // << Import your auth store
+import { Heart, HeartOff } from 'lucide-vue-next'
 
 const auth = useAuthStore()
 const user = auth.user
@@ -110,6 +111,27 @@ const formatDate = (startStr: string, endStr: string) => {
     return `${startDateFormatted} - ${endDateFormatted}`
   }
 }
+async function toggleBookmark(event: Event) {
+  const isNowBookmarked = !event.bookmarked
+
+  try {
+    if (isNowBookmarked) {
+      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } else {
+      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+    }
+
+    event.bookmarked = isNowBookmarked
+  } catch (error) {
+    console.error('Failed to toggle bookmark:', error)
+  }
+}
 
 </script>
 
@@ -117,7 +139,23 @@ const formatDate = (startStr: string, endStr: string) => {
   <div class="container mx-auto p-8">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div v-for="event in eventsList" :key="event.id"
-        class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col transition duration-300 hover:shadow-xl hover:translate-y-1">
+        class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col transition duration-300 hover:shadow-xl hover:translate-y-1 relative">
+
+        <!-- Bookmark button - redesigned as an elegant ribbon style -->
+        <button @click="toggleBookmark(event)" class="absolute top-0 right-5 z-10 transition-all duration-300 transform"
+          :class="[event.bookmarked ? 'text-red-500' : 'text-gray-400']">
+          <div class="relative">
+            <div class="w-8 h-10 overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-full bg-white shadow-md"
+                :class="[event.bookmarked ? 'bg-red-50' : 'bg-gray-50']"
+                style="clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);">
+              </div>
+            </div>
+            <Heart class="absolute top-2 left-1.5 w-5 h-5 transition-all duration-300"
+              :class="[event.bookmarked ? 'fill-current' : 'stroke-current fill-transparent']"
+              :strokeWidth="event.bookmarked ? 0 : 2" />
+          </div>
+        </button>
 
         <div class="p-5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white">
           <h4 class="font-semibold text-lg">{{ event.name }}</h4>

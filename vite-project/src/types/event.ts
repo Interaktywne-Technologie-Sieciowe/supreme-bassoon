@@ -8,4 +8,5 @@ export interface Event {
   location: string;
   last_update: string;
   conference_name: string;
+  bookmarked?: boolean;
 }
