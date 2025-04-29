@@ -9,6 +9,10 @@ import type { Event } from '@/types/event'
 const auth = useAuthStore()
 const isLoggedIn = computed(() => !!auth.user)
 const calendarMode = ref(true)
+const showBookmarkedOnly = ref(false)
+const filteredEvents = computed(() =>
+  showBookmarkedOnly.value ? events.value.filter(e => e.bookmarked) : events.value
+)
 
 // Fetch events
 const events = ref<Event[]>([])
@@ -76,17 +80,30 @@ async function toggleBookmark(event: Event) {
   <main class="p-6">
     <Login v-if="!isLoggedIn" />
     <div v-else>
-      <div class="flex justify-center items-center gap-3">
-        <!-- Modern Toggle Switch -->
+      <div class="flex flex-row justify-center gap-5">
+        <div class="flex justify-center items-center gap-3">
+          <!-- Modern Toggle Switch -->
+          <div class="relative inline-flex items-center flex flex-col">
+            <div class="w-14 h-7 flex items-center bg-gray-200 rounded-full p-1 duration-300 ease-in-out cursor-pointer"
+              :class="{ 'bg-indigo-100': calendarMode }" @click="calendarMode = !calendarMode">
+              <div class="bg-white w-5 h-5 rounded-full shadow-md transform duration-300 ease-in-out"
+                :class="{ 'translate-x-7': calendarMode }"></div>
+            </div>
+
+            <div class="mt-1 text-sm font-medium flex text-lg-center text-amber-50">
+              {{ calendarMode ? 'Kalendarz' : 'Karty' }}
+            </div>
+          </div>
+        </div>
+        <!-- Bookmarked Filter Switch -->
         <div class="relative inline-flex items-center flex flex-col">
           <div class="w-14 h-7 flex items-center bg-gray-200 rounded-full p-1 duration-300 ease-in-out cursor-pointer"
-            :class="{ 'bg-indigo-100': calendarMode }" @click="calendarMode = !calendarMode">
+            :class="{ 'bg-green-200': showBookmarkedOnly }" @click="showBookmarkedOnly = !showBookmarkedOnly">
             <div class="bg-white w-5 h-5 rounded-full shadow-md transform duration-300 ease-in-out"
-              :class="{ 'translate-x-7': calendarMode }"></div>
+              :class="{ 'translate-x-7': showBookmarkedOnly }"></div>
           </div>
-
           <div class="mt-1 text-sm font-medium flex text-lg-center text-amber-50">
-            {{ calendarMode ? 'Kalendarz' : 'Karty' }}
+            {{ showBookmarkedOnly ? 'Ulubione' : 'Wszystkie' }}
           </div>
         </div>
       </div>
@@ -98,9 +115,9 @@ async function toggleBookmark(event: Event) {
 
       <!-- Content views -->
       <div v-else class="transition-opacity duration-300">
-        <CalendarView v-if="calendarMode" :events="events" @delete-event="deleteEvent"
+        <CalendarView v-if="calendarMode" :events="filteredEvents" @delete-event="deleteEvent"
           @toggle-bookmark="toggleBookmark" />
-        <CardView v-else :events="events" @delete-event="deleteEvent" @toggle-bookmark="toggleBookmark" />
+        <CardView v-else :events="filteredEvents" @delete-event="deleteEvent" @toggle-bookmark="toggleBookmark" />
       </div>
     </div>
   </main>
