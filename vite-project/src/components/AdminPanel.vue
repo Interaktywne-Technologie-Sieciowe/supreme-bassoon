@@ -74,7 +74,16 @@
               class="bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 flex justify-between items-center shadow-sm hover:bg-gray-100 transition-colors">
               <div>
                 <p class="font-medium text-sm">{{ conf.name || 'Konferencja' }}</p>
-                <p class="text-gray-500 text-xs">ID: {{ conf.id }}</p>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-gray-500 text-xs">ID:</span>
+                  <code @click="copyToClipboard(conf.id)"
+                    class="text-xs bg-gray-200 px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-300 transition-colors"
+                    title="Kliknij aby skopiować">{{ conf.id }}</code>
+                  <span v-if="copiedId === conf.id"
+                    class="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded animate-fade-in">
+                    Skopiowano
+                  </span>
+                </div>
               </div>
               <button @click="deleteConference(index, conf.id)"
                 class="text-xs px-2 py-1 rounded text-red-600 hover:bg-red-50 hover:text-red-700 font-medium transition">
@@ -112,9 +121,39 @@
     </div>
   </div>
 </template>
+<style lang="css" scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+</style>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+const copiedId = ref<string | null>('');
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      copiedId.value = text;
+
+      // Clear the "copied" message after 2 seconds
+      setTimeout(() => {
+        copiedId.value = null;
+      }, 2000);
+    })
+    .catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+}
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
