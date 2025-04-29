@@ -20,11 +20,19 @@ export const useAuthStore = defineStore("auth", {
     setUser(user: User) {
       this.user = user;
     },
-    logout() {
+    async logout() {
+      try {
+        await fetch("http://localhost:3000/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+      } catch (e) {
+        console.error("Logout request failed", e);
+      }
       this.user = null;
-      // Clear the token cookie when logging out
-      document.cookie = "token=; Max-Age=0; path=/";
+      window.location.href = "/";
     },
+
     async initAuth() {
       try {
         const res = await fetch("http://localhost:3000/api/auth/me", {

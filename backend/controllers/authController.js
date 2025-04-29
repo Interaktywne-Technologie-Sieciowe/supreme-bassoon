@@ -10,6 +10,16 @@ const handleErrors = (err, res) => {
     console.error("Login error:", err);
     return res.status(500).json({ error: "Internal server error" });
 };
+// routes/auth.js or similar
+exports.logout = async (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        path: "/",
+    });
+    return res.status(200).json({ message: "Logged out" });
+};
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
