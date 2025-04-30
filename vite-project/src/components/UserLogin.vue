@@ -26,7 +26,6 @@
             style="width: 2rem; height: 2rem;"></span>
           <span v-else>Zaloguj się</span>
         </button>
-
       </form>
 
       <p class="text-sm text-center text-white/80">
@@ -39,8 +38,18 @@
           Dostęp bez logowania
         </a>
       </p>
-
     </div>
+
+    <!-- Popup error -->
+    <transition name="fade">
+      <div
+        v-if="error"
+        class="fixed top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-xl shadow-lg z-50"
+        role="alert"
+      >
+        {{ error }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -52,6 +61,7 @@ import { useRouter } from 'vue-router'
 const email = ref('')
 const password = ref('')
 const isLoading = ref(false)
+const error = ref('')
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -68,7 +78,7 @@ const guestLogin = () => {
   }
 
   authStore.setUser(guestUser)
-  router.push('/') // Redirect to homepage
+  router.push('/')
 }
 
 const login = async () => {
@@ -87,14 +97,19 @@ const login = async () => {
     })
 
     if (!response.ok) {
-      throw new Error(`Błąd logowania: ${response.statusText}`)
+      const result = await response.json()
+      throw new Error(result.error || `Błąd logowania: ${response.statusText}`)
     }
 
     const data = await response.json()
     authStore.setUser(data.user)
-    router.push('/') // Redirect to home after successful login
-  } catch (error) {
-    console.error('Błąd podczas logowania:', error)
+    router.push('/')
+  } catch (err: any) {
+    console.error('Błąd podczas logowania:', err)
+    error.value = err.message || 'Wystąpił nieznany błąd.'
+    setTimeout(() => {
+      error.value = ''
+    }, 4000)
   } finally {
     isLoading.value = false
   }
@@ -103,5 +118,15 @@ const login = async () => {
 const resetView = () => {
   router.push('/PasswordForgot')
 }
-
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
