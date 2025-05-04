@@ -124,12 +124,25 @@ function closeModal() {
   editableEvent.value = {}
 }
 
+function formatDateToLocalInput(date: Date | string) {
+  const d = typeof date === 'string' ? new Date(date) : date
+
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+
 function editEvent() {
   editMode.value = true
   editableEvent.value = {
     name: selectedEvent.value.extendedProps.name,
-    start: selectedEvent.value.start.toISOString().slice(0, 16),
-    end: selectedEvent.value.end.toISOString().slice(0, 16),
+    start: formatDateToLocalInput(selectedEvent.value.start ?? selectedEvent.value.startStr),
+    end: formatDateToLocalInput(selectedEvent.value.end ?? selectedEvent.value.endStr),
     location: selectedEvent.value.extendedProps.location
   }
 }
