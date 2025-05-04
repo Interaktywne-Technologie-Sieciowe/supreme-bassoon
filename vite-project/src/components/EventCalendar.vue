@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import plLocale from '@fullcalendar/core/locales/pl'
 
@@ -79,26 +80,28 @@ const mapEvents = (events: Event[]) => {
 }
 
 const calendarOptions = ref<any>({
-  plugins: [dayGridPlugin, interactionPlugin],
+  plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
   initialView: 'dayGridMonth',
-  height: 'auto',
   locale: plLocale,
+  scrollTime: '08:00:00',
+  allDaySlot: false,
   events: mapEvents(props.events),
   headerToolbar: {
     left: 'prev,next today',
     center: 'title',
-    right: 'dayGridMonth,dayGridWeek'
+    right: 'dayGridMonth,timeGridWeek,timeGridDay'
   },
   buttonText: {
     today: 'Dzisiaj',
     month: 'Miesiąc',
-    week: 'Tydzień'
+    week: 'Tydzień',
+    day: 'Dzień'
   },
   eventClick: (info: any) => {
-    selectedEvent.value = info.event
-    isModalOpen.value = true
+    selectedEvent.value = info.event;
+    isModalOpen.value = true;
   }
-})
+});
 
 // Watch if props.events change
 watch(() => props.events, (newEvents) => {
