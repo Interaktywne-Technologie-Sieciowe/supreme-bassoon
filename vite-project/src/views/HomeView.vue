@@ -84,8 +84,7 @@ const fetchBookmarks = async () => {
 
 onMounted(async () => {
   loading.value = true
-  await fetchEvents()
-  await fetchBookmarks()
+  await Promise.all([fetchEvents(), fetchBookmarks()])
   loading.value = false
 })
 
