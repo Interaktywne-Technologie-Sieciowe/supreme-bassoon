@@ -3,9 +3,10 @@ import Login from '../components/UserLogin.vue'
 import CalendarView from '../components/EventCalendar.vue'
 import CardView from './EventCardView.vue'
 import { useAuthStore } from '@/stores/auth'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import type { Event } from '@/types/event'
 import type { User } from '@/types/user'
+import { getBackendURL } from '@/services/configService'
 
 const auth = useAuthStore()
 const isLoggedIn = computed(() => !!auth.user)
@@ -18,43 +19,92 @@ const filteredEvents = computed(() =>
 // Fetch events
 const events = ref<Event[]>([])
 const loading = ref(true)
+const bookmarksLoaded = ref(false)
 
-onMounted(async () => {
+// Fetch all events without bookmarks initially
+const fetchEvents = async () => {
   try {
-    const [eventsRes, bookmarksRes] = await Promise.all([
-      fetch('http://localhost:3000/api/events'),
-      fetch('http://localhost:3000/api/bookmarks', { credentials: 'include' })
-    ])
-    const [eventData, bookmarksData] = await Promise.all([
-      eventsRes.json(),
-      bookmarksRes.json()
-    ])
+    const eventsRes = await fetch('http://localhost:3000/api/events')
+    const eventData = await eventsRes.json()
+
+    // Initialize events without bookmark data first
+    events.value = eventData.map((e: Event) => ({
+      ...e,
+      bookmarked: false
+    }))
+
+    return eventData
+  } catch (error) {
+    console.error('Error fetching events:', error)
+    return []
+  }
+}
+
+// Fetch bookmarks separately and update events
+const fetchBookmarks = async () => {
+  if (!isLoggedIn.value) {
+    bookmarksLoaded.value = true
+    return
+  }
+
+  try {
+    const bookmarksRes = await fetch(`${getBackendURL("http://localhost:3000")}/api/bookmarks`, {
+      credentials: 'include',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    })
+
+    if (!bookmarksRes.ok) {
+      throw new Error(`Bookmarks fetch failed with status: ${bookmarksRes.status}`)
+    }
+
+    const bookmarksData = await bookmarksRes.json()
 
     if (Array.isArray(bookmarksData)) {
       const bookmarkedIds = new Set(bookmarksData.map((b: any) => b.id))
-      events.value = eventData.map((e: Event) => ({
+
+      // Update existing events with bookmark information
+      events.value = events.value.map((e: Event) => ({
         ...e,
         bookmarked: bookmarkedIds.has(e.id)
       }))
+
+      bookmarksLoaded.value = true
     } else {
-      // Handle case where bookmarksData is not an array (fallback logic if needed)
-      console.warn('Bookmarks data is not an array. Defaulting to empty list.')
-      events.value = eventData.map((e: Event) => ({
-        ...e,
-        bookmarked: false
-      }))
+      console.warn('Bookmarks data is not an array:', bookmarksData)
+      bookmarksLoaded.value = true
     }
   } catch (error) {
-    console.error('Error fetching data:', error)
-  } finally {
-    loading.value = false
+    console.error('Error fetching bookmarks:', error)
+    bookmarksLoaded.value = true
   }
+}
+
+onMounted(async () => {
+  loading.value = true
+  await fetchEvents()
+  await fetchBookmarks()
+  loading.value = false
 })
+
+// Watch for auth changes and refetch bookmarks when user logs in
+watch(() => auth.user, async (newUser) => {
+  if (newUser) {
+    loading.value = true
+    await fetchBookmarks()
+    loading.value = false
+  } else {
+    events.value = events.value.map(e => ({ ...e, bookmarked: false }))
+    bookmarksLoaded.value = false
+  }
+}, { immediate: true })
 
 async function deleteEvent(id: string) {
   if (confirm('Are you sure you want to delete this event?')) {
     try {
-      await fetch(`http://localhost:3000/api/events/${id}`, {
+      await fetch(`${getBackendURL("http://localhost:3000")}/api/events/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       })
@@ -78,12 +128,12 @@ async function toggleBookmark(event: Event) {
   const isNowBookmarked = !event.bookmarked
   try {
     if (isNowBookmarked) {
-      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+      await fetch(`${getBackendURL("http://localhost:3000")}/api/bookmarks/${event.id}`, {
         method: 'POST',
         credentials: 'include'
       })
     } else {
-      await fetch(`http://localhost:3000/api/bookmarks/${event.id}`, {
+      await fetch(`${getBackendURL("http://localhost:3000")}/api/bookmarks/${event.id}`, {
         method: 'DELETE',
         credentials: 'include'
       })
