@@ -22,10 +22,6 @@ const userName = computed(() => auth.user?.name ?? '')
           active-class="underline">
           AdminPanel
         </RouterLink>
-        <RouterLink v-if="isLoggedIn" to="/PasswordChange" class="text-white hover:text-pink-200 transition"
-          active-class="underline">
-          Zmień hasło
-        </RouterLink>
 
         <!-- Informacja o użytkowniku -->
         <span v-if="isLoggedIn" class="text-white italic">

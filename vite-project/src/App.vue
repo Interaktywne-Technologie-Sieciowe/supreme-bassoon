@@ -18,3 +18,9 @@ onMounted(() => {
   authStore.initAuth()
 })
 </script>
+
+<style>
+body {
+  overflow: hidden;
+}
+</style>

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import AdminPanel from "../components/AdminPanel.vue";
-import PasswordChange from "../components/PasswordChange.vue";
+import PasswordChange from "../views/PasswordChange.vue";
+import UserPanel from "../views/UserPanel.vue"
 import PasswordForgot from "../components/PasswordForgot.vue";
 
 
@@ -27,6 +28,11 @@ const router = createRouter({
       path: "/PasswordForgot",
       name: "PasswordForgot",
       component: PasswordForgot,
+    },
+    {
+      path: "/UserPanel",
+      name: "UserPanel",
+      component: UserPanel,
     },
   ],
 });
