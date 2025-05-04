@@ -24,7 +24,7 @@ const bookmarksLoaded = ref(false)
 // Fetch all events without bookmarks initially
 const fetchEvents = async () => {
   try {
-    const eventsRes = await fetch('http://localhost:3000/api/events')
+    const eventsRes = await fetch(`${getBackendURL("http://localhost:3000")}/api/events`)
     const eventData = await eventsRes.json()
 
     // Initialize events without bookmark data first
