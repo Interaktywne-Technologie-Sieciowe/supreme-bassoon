@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AdminPanel from '../components/PasswordChange.vue';
+import PasswordChange from '../components/PasswordChange.vue';
 </script>
 
 <template>
