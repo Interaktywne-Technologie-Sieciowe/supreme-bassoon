@@ -1,4 +1,7 @@
 const eventModel = require('../models/eventModel');
+const bookmarkModel = require('../models/bookmarkModel');
+const {sendEmail} = require('../utils/sendMail');
+
 
 // Helper function for error handling
 const handleErrors = (err, res) => {
@@ -131,16 +134,40 @@ exports.updateEvent = async (req, res) => {
 
 exports.deleteEvent = async (req, res) => {
     try {
-        if (!req.params.id) {
+        const eventId = req.params.id;
+        if (!eventId) {
             return res.status(400).json({ error: 'Event ID is required' });
         }
 
-        const deleted = await eventModel.remove(req.params.id);
-        if (!deleted) {
+        const event = await eventModel.findById(eventId);
+        if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        res.json({ message: 'Event deleted successfully' });
+        const bookmarks = await bookmarkModel.findActiveWithUsersByEventId(eventId);
+
+        for (const bookmark of bookmarks) {
+            if (!bookmark.email) continue;
+
+            const mailBody = `
+                <p>Hi ${bookmark.first_name}!</p>
+                <p>The event "<strong>${event.name}</strong>" you bookmarked has been deleted from MeetMe.</p>
+                <p>Feel free to check out other events available on the platform.</p>
+            `;
+
+            const subject = 'A bookmarked event has been deleted';
+
+            try {
+                await sendEmail(bookmark.email, mailBody, subject);
+            } catch (emailErr) {
+                console.warn(`Failed to send email to ${bookmark.email}:`, emailErr);
+            }
+        }
+
+        await eventModel.remove(eventId);
+
+        res.json({ message: 'Event deleted and all interested users were notified.' });
+
     } catch (err) {
         handleErrors(err, res);
     }
