@@ -100,12 +100,15 @@
           <div class="flex flex-col sm:flex-row gap-3 mb-4">
             <input v-model="exportId" type="text" placeholder="ID konferencji do eksportu"
               class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" />
+            <div class="flex gap-x-2">
+              <input class="flex" type="checkbox" id="checkbox" v-model="liteExport" />
+              <label class="flex text-nowrap self-center" for="checkbox">{{ "Wersja lite" }}</label>
+            </div>
             <button @click="exportConference"
               class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition text-sm whitespace-nowrap">
               Eksportuj
             </button>
           </div>
-
           <form @submit.prevent="importConference" class="flex flex-col sm:flex-row gap-3">
             <input type="file" accept="application/json" @change="handleFileChange" class="flex-1 block w-full text-sm text-gray-700 file:mr-3 file:py-1.5 file:px-3
                    file:rounded-lg file:border-0 file:text-sm file:font-medium
@@ -138,7 +141,7 @@
 </style>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-
+const liteExport = ref(false);
 const copiedId = ref<string | null>('');
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text)
@@ -297,8 +300,10 @@ const exportConference = async () => {
   try {
     const response = await fetch(`http://localhost:3000/api/conferences/export/${exportId.value}`, {
       credentials: 'include',
-    })
-
+      headers: {
+        "x-lite-export": liteExport.value.toString()
+      }
+    });
     if (!response.ok) throw new Error('Błąd przy eksporcie konferencji')
 
     const blob = await response.blob()
