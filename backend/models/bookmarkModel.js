@@ -30,3 +30,15 @@ exports.remove = async (userId, eventId) => {
 
     return result.rowCount > 0;
 };
+
+
+exports.findActiveWithUsersByEventId = async (eventId) => {
+    const result = await pool.query(`
+        SELECT b.*, u.email, u.name
+        FROM bookmarks b
+        JOIN users u ON b.user_id = u.id
+        WHERE b.event_id = $1 AND b.is_active = true
+    `, [eventId]);
+
+    return result.rows;
+};

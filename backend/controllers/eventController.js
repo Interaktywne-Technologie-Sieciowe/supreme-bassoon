@@ -1,4 +1,7 @@
 const eventModel = require('../models/eventModel');
+const bookmarkModel = require('../models/bookmarkModel');
+const {sendEmail} = require('../utils/sendMail');
+
 
 // Helper function for error handling
 const handleErrors = (err, res) => {
@@ -136,39 +139,32 @@ exports.deleteEvent = async (req, res) => {
             return res.status(400).json({ error: 'Event ID is required' });
         }
 
-        const event = await eventModel.findByPk(eventId);
+        const event = await eventModel.findById(eventId);
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        const bookmarks = await bookmarkModel.findAll({
-            where: {
-                event_id: eventId,
-                is_active: true
-            },
-            include: [{
-                model: userModel,
-                attributes: ['email', 'firstName']
-            }]
-        });
-
+        const bookmarks = await bookmarkModel.findActiveWithUsersByEventId(eventId);
 
         for (const bookmark of bookmarks) {
-            const user = bookmark.user;
-            if (!user || !user.email) continue; 
+            if (!bookmark.email) continue;
 
             const mailBody = `
-                <p>Hi ${user.firstName}!</p>
+                <p>Hi ${bookmark.first_name}!</p>
                 <p>The event "<strong>${event.name}</strong>" you bookmarked has been deleted from MeetMe.</p>
                 <p>Feel free to check out other events available on the platform.</p>
             `;
 
             const subject = 'A bookmarked event has been deleted';
 
-            await sendEmail("user.email", mailBody, subject);
+            try {
+                await sendEmail(bookmark.email, mailBody, subject);
+            } catch (emailErr) {
+                console.warn(`Failed to send email to ${bookmark.email}:`, emailErr);
+            }
         }
 
-        await event.destroy();
+        await eventModel.remove(eventId);
 
         res.json({ message: 'Event deleted and all interested users were notified.' });
 
