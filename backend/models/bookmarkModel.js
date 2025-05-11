@@ -12,6 +12,17 @@ exports.findByUserId = async (userId) => {
     return result.rows;
 };
 
+exports.findUsersByEventId = async (eventId) => {
+    const result = await pool.query(`
+        SELECT u.id, u.name, u.email
+        FROM bookmarks b
+        JOIN users u ON b.user_id = u.id
+        WHERE b.event_id = $1 AND b.is_active = true
+    `, [eventId]);
+
+    return result.rows;
+};
+
 exports.add = async (userId, eventId) => {
     await pool.query(`
         INSERT INTO bookmarks (user_id, event_id, created_at, last_update, is_active)

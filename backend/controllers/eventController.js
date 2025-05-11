@@ -1,4 +1,6 @@
 const eventModel = require('../models/eventModel');
+const bookmarkModel = require('../models/bookmarkModel');
+const { sendEmail } = require("../utils/sendMail");
 
 // Helper function for error handling
 const handleErrors = (err, res) => {
@@ -131,16 +133,42 @@ exports.updateEvent = async (req, res) => {
 
 exports.deleteEvent = async (req, res) => {
     try {
-        if (!req.params.id) {
+        const eventId = req.params.id;
+
+        if (!eventId) {
             return res.status(400).json({ error: 'Event ID is required' });
         }
 
-        const deleted = await eventModel.remove(req.params.id);
+        const event = await eventModel.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        const bookmarkedUsers = await bookmarkModel.findUsersByEventId(eventId);
+
+        const deleted = await eventModel.remove(eventId);
         if (!deleted) {
             return res.status(404).json({ error: 'Event not found' });
         }
 
-        res.json({ message: 'Event deleted successfully' });
+        for (const user of bookmarkedUsers) {
+            try {
+                const messageBody = `
+                    <div style="font-family: Arial, sans-serif; color: #333;">
+                        <h2>Hi ${user.name},</h2>
+                        <p>The event <strong>${event.name}</strong>, that you had in your favorites has been removed.</p>
+                        <p>Best Regards,<br>The MeetMe Team</p>
+                    </div>
+                `;
+                const subject = `Event "${event.name}" has beem deleted`;
+
+                await sendEmail(user.email, messageBody, subject);
+            } catch (emailErr) {
+                console.error(`Error while sending mail to ${user.email}:`, emailErr);
+            }
+        }
+
+        res.json({ message: 'Event deleted successfully and notifications sent.' });
     } catch (err) {
         handleErrors(err, res);
     }
