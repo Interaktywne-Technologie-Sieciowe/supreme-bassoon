@@ -143,3 +143,46 @@ exports.refreshLogin = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+exports.changePassword = async (req, res) => {
+    const { userMail, newPassword } = req.body;
+    if (!userMail || !newPassword) {
+        return res.status(400).json({ error: "Missing email or new password." });
+    }
+try{
+    const user = await userModel.findByEmail(userMail);
+    if (!user) {
+        return res.status(404).json({ error: "User does not exist." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userModel.updatePasswordByEmail(userMail, hashedPassword);
+
+
+    res.json({ message: "Password changed successfully." });
+} catch (err) {
+    return res.status(401).json({ error: "error password change from user panel." });
+}
+};
+
+
+exports.changeEmail = async (req, res) => {
+    const { userMail, newEmail } = req.body;
+    if (!userMail || !newEmail) {
+        return res.status(400).json({ error: "Missing email or new email." });
+    }
+try{
+    const user = await userModel.findByEmail(userMail);
+    if (!user) {
+        return res.status(404).json({ error: "User does not exist." });
+    }
+
+    await userModel.updateEmailByEmail(userMail, newEmail);
+
+
+    res.json({ message: "Email changed successfully." });
+} catch (err) {
+    return res.status(401).json({ error: "error email change from user panel." });
+}
+};

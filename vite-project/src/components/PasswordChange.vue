@@ -14,12 +14,20 @@
             placeholder="hasło" />
         </div>
 
+        <div class="space-y-2">
+          <label for="secPassword" class="block text-sm font-medium">Potwierdź hasło</label>
+          <input id="secPassword" v-model="secPassword" type="password" required
+            class="w-full px-4 py-2 bg-white/20 text-white placeholder-white/70 rounded-xl border border-white/30 focus:outline-none focus:ring-2 focus:ring-white"
+            placeholder="hasło" />
+        </div>
+
+
         <button type="submit"
           class="w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition">
           Zatwierdź zmianę hasła
         </button>
       </form>
-
+      <div v-if="matchError" class=" text-sm text-center bg-red-600 text-white px-4 py-2 rounded-xl shadow-lg z-50" role="alert">{{ matchError }}</div>
       <div v-if="error" class="text-red-300 text-sm text-center">{{ error }}</div>
       <div v-if="success" class="text-green-300 text-sm text-center">{{ success }}</div>
     </div>
@@ -33,8 +41,10 @@ import { jwtDecode } from 'jwt-decode';
 const token = new URLSearchParams(window.location.search).get('token');
 const email = ref('');
 const password = ref('');
+const secPassword=ref('');
 const error = ref('');
 const success = ref('');
+const matchError=ref('');
 
 onMounted(() => {
   if (token) {
@@ -52,8 +62,16 @@ onMounted(() => {
 const submitReset = async () => {
   error.value = '';
   success.value = '';
+  matchError.value='';
+  
+if (password.value !== secPassword.value) {
+    matchError.value = 'Hasła nie pasują!';
+    return;
+  }
+
 
   try {
+
     const response = await fetch('http://localhost:3000/api/auth/reset-password', {
       method: 'POST',
       headers: {
@@ -75,5 +93,8 @@ const submitReset = async () => {
   } catch (err) {
     error.value = err.message || 'Wystąpił błąd przy zmianie hasła.';
   }
+
 };
+
+
 </script>

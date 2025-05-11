@@ -45,6 +45,10 @@ exports.updatePasswordByEmail = async (email, newPassword) => {
     await pool.query("UPDATE users SET password = $1 WHERE email = $2", [newPassword, email]);
 };
 
+exports.updateEmailByEmail = async (email, newEmail) => {
+    await pool.query("UPDATE users SET email = $1 WHERE email = $2", [newEmail, email]);
+};
+
 exports.delete = async (id) => {
     return await pool.query("DELETE FROM users WHERE id = $1", [id]);
 };
