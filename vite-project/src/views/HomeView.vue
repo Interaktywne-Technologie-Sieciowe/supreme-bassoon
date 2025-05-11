@@ -147,10 +147,10 @@ async function toggleBookmark(event: Event) {
 </script>
 
 <template>
-  <main class="p-6">
+  <main>
     <Login v-if="!isLoggedIn" />
     <div v-else>
-      <div class="flex flex-row justify-center gap-5">
+      <div class="flex flex-row justify-center gap-5 pt-18">
         <div class="flex justify-center items-center gap-3">
           <!-- Modern Toggle Switch -->
           <div class="relative inline-flex items-center flex flex-col">

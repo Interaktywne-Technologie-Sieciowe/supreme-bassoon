@@ -207,7 +207,7 @@ function isBookmarked(eventProps: any): boolean {
 
 <template>
   <div>
-    <div class="container mx-auto p-4 md:p-8">
+    <div class="container mx-auto p-2">
       <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
         <!-- Calendar -->
         <div class="lg:col-span-3 bg-white rounded-xl shadow-lg p-6 overflow-hidden border border-gray-100">

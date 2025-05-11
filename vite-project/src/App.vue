@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
     <Navbar />
-    <main class="pt-16"> <!-- Add padding top to account for the fixed navbar -->
+    <main>
       <RouterView />
     </main>
   </div>
@@ -18,9 +18,3 @@ onMounted(() => {
   authStore.initAuth()
 })
 </script>
-
-<style>
-body {
-  overflow: hidden;
-}
-</style>
