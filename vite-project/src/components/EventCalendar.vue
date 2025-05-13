@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 import type { Event } from '@/types/event'
 import { useAuthStore } from '@/stores/auth'
 
@@ -9,7 +9,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import plLocale from '@fullcalendar/core/locales/pl'
 
-
+const showGlobalToast = inject('showGlobalToast') as (msg: string, type?: 'error' | 'success' | 'warning') => void
 const auth = useAuthStore()
 const user = auth.user
 const selectedEvent = ref<any | null>(null)
@@ -29,11 +29,17 @@ function handleDelete(id: string) {
 }
 
 function handleBookmark(eventInfo: any) {
+  if (!user.value || user.value.role === 'guest') {
+    showGlobalToast('Musisz być zalogowany, aby polubić wydarzenie!', 'error')
+    return
+  }
+
   const event = props.events.find(e => e.id === eventInfo.id) as Event
   if (event) {
     emit('toggle-bookmark', event)
   }
 }
+
 const colorPalette = [
   { bg: '#8b5cf6', border: '#7c3aed' },
   { bg: '#3b82f6', border: '#2563eb' },
