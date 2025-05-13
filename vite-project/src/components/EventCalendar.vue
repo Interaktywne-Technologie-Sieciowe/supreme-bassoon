@@ -360,6 +360,20 @@ function isBookmarked(eventProps: any): boolean {
                     <span class="ml-2">{{ selectedEvent.extendedProps.location }}</span>
                   </div>
                 </div>
+                <!-- Google Maps -->
+                <div class="mt-4">
+                  <iframe
+                    :src="`https://www.google.com/maps?q=${encodeURIComponent(selectedEvent.extendedProps.location)}&output=embed`"
+                    width="100%"
+                    height="200"
+                    style="border:0;"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    class="rounded-lg shadow"
+                  ></iframe>
+                </div>
+
               </div>
             </div>
           </div>
