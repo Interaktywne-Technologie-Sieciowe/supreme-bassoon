@@ -10,6 +10,8 @@ const userRoutes = require("./routes/userRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const bookmarkRoutes = require("./routes/bookmarkRoutes");
 const conferenceRoutes = require("./routes/conferenceRoutes");
+const reportRoutes = require('./routes/reportRoutes');
+
 
 // Initialize Express app
 const app = express();
@@ -35,5 +37,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/conferences", conferenceRoutes);
+app.use('/api/reports', reportRoutes);
+
 
 module.exports = app;

@@ -17,6 +17,7 @@ CREATE TABLE
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT now (),
         last_login TIMESTAMP,
+         login_count INTEGER DEFAULT 0,
         role_id UUID REFERENCES USERS_ROLES (id) ON DELETE SET NULL -- Role can be set to NULL if the role is deleted
     );
 

@@ -52,3 +52,7 @@ exports.updateEmailByEmail = async (email, newEmail) => {
 exports.delete = async (id) => {
     return await pool.query("DELETE FROM users WHERE id = $1", [id]);
 };
+
+exports.incrementLoginCount = async (userId) => {
+  await pool.query(`UPDATE users SET login_count = login_count + 1 WHERE id = $1`, [userId]);
+};
