@@ -43,6 +43,7 @@ exports.login = async (req, res) => {
         const token = generateTokenForUser(user, role);
 
         await userModel.updateLastLogin(user.id);
+        await userModel.incrementLoginCount(user.id);
 
         const oneHourInMilliseconds = 60 * 60 * 1000;
 

@@ -13,7 +13,12 @@
             :class="['px-4 py-2 rounded-lg font-medium transition text-sm', activeTab === 'conferences' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
             Konferencje
           </button>
+          <button @click="downloadReport"
+            class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm rounded-lg font-medium transition">
+            Raport PDF
+          </button>
         </div>
+
       </div>
 
       <!-- USERS -->
@@ -347,5 +352,25 @@ const importConference = async () => {
   }
 }
 const activeTab = ref('users')
+
+const downloadReport = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/reports/usage/pdf', {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Błąd przy generowaniu raportu');
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `raport-uzycia.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    alert("Nie udało się pobrać raportu PDF");
+  }
+};
 
 </script>

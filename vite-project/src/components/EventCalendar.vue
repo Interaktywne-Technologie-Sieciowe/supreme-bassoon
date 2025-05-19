@@ -29,7 +29,7 @@ function handleDelete(id: string) {
 }
 
 function handleBookmark(eventInfo: any) {
-  if (!user.value || user.value.role === 'guest') {
+  if (!user || user.role === 'guest') {
     showGlobalToast('Musisz być zalogowany, aby polubić wydarzenie!', 'error')
     return
   }
