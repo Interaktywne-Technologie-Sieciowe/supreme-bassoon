@@ -45,10 +45,10 @@ INSERT INTO CONFERENCE (
     location
 ) VALUES (
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'TechConnect Summit 2025',
+    'Centrum Biznesowe Synergia',
     '2025-06-15 09:00:00',
     '2025-06-17 18:00:00',
-    'TechConnect Summit brings together industry leaders, innovators, and developers to explore emerging technologies and future trends in software development, AI, cloud computing, and cybersecurity.',
+    'Centrum Biznesowe Synergia to zrewitalizowany kompleks biurowo-konferencyjny w centrum Łodzi, oferujący nowoczesne sale szkoleniowe i eventowe z pełnym wyposażeniem.',
     NOW(),
     'ul. Wioślarska 8, 00-411 Warszawa'
 ) RETURNING id;
@@ -144,7 +144,7 @@ VALUES
     'Plac Wolności',
     '2025-06-01 10:00:00',
     '2025-06-04 20:00:00',
-    'A dynamic and immersive gaming conference bringing together game developers, players, streamers, and industry experts. Dive into indie showcases, AAA game reveals, eSports tournaments, and the future of VR/AR gaming.',
+    'Festiwal gier i technologii – spotkania z twórcami, turnieje e-sportowe, prezentacje gier niezależnych i nowości VR/AR w sercu Łodzi.',
     NOW(),
     'Plac Wolności, 91-415 Łódź'
   ) RETURNING id;
