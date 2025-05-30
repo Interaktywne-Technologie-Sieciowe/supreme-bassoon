@@ -45,7 +45,7 @@ INSERT INTO CONFERENCE (
     location
 ) VALUES (
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Centrum Biznesowe Synergia',
+    '',
     '2025-06-15 09:00:00',
     '2025-06-17 18:00:00',
     'Centrum Biznesowe Synergia to zrewitalizowany kompleks biurowo-konferencyjny w centrum Łodzi, oferujący nowoczesne sale szkoleniowe i eventowe z pełnym wyposażeniem.',
@@ -141,7 +141,7 @@ INSERT INTO CONFERENCE (id, name, start_date, end_date, description, last_update
 VALUES
   (
     'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Plac Wolności',
+    '',
     '2025-06-01 10:00:00',
     '2025-06-04 20:00:00',
     'Festiwal gier i technologii – spotkania z twórcami, turnieje e-sportowe, prezentacje gier niezależnych i nowości VR/AR w sercu Łodzi.',
