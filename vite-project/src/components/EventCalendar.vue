@@ -91,6 +91,11 @@ const calendarOptions = ref<any>({
   locale: plLocale,
   scrollTime: '08:00:00',
   allDaySlot: false,
+    eventTimeFormat: {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  },
   events: mapEvents(props.events),
   headerToolbar: {
     left: 'prev,next today',
@@ -106,6 +111,10 @@ const calendarOptions = ref<any>({
   eventClick: (info: any) => {
     selectedEvent.value = info.event;
     isModalOpen.value = true;
+  },
+  datesSet: (arg: any) => {
+    const calendarApi = arg.view.calendar;
+    calendarApi.updateSize();
   }
 });
 
@@ -545,6 +554,17 @@ function isBookmarked(eventProps: any): boolean {
   min-height: 650px;
   height: 100%;
 }
+
+:deep(.fc-event-title) {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+:deep(.fc-daygrid-day-frame) {
+  padding-right: 1rem; 
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
