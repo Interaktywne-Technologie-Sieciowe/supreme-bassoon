@@ -1,4 +1,5 @@
 <template>
+    <div class="pt-16">
   <div class="container mx-auto p-4 md:p-6 text-gray-800">
     <div class="bg-white shadow-lg rounded-xl p-5 md:p-6 space-y-8">
 
@@ -127,6 +128,7 @@
       </div>
 
     </div>
+  </div>
   </div>
 </template>
 <style lang="css" scoped>

@@ -45,12 +45,12 @@ INSERT INTO CONFERENCE (
     location
 ) VALUES (
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'TechConnect Summit 2025',
+    '',
     '2025-06-15 09:00:00',
     '2025-06-17 18:00:00',
-    'TechConnect Summit brings together industry leaders, innovators, and developers to explore emerging technologies and future trends in software development, AI, cloud computing, and cybersecurity.',
+    'Centrum Biznesowe Synergia to zrewitalizowany kompleks biurowo-konferencyjny w centrum Łodzi, oferujący nowoczesne sale szkoleniowe i eventowe z pełnym wyposażeniem.',
     NOW(),
-    'Warsaw Tech Center, Warsaw, Poland'
+    'ul. Wioślarska 8, 00-411 Warszawa'
 ) RETURNING id;
 
 -- Insert events for the conference
@@ -63,236 +63,79 @@ INSERT INTO EVENTS (
     last_update
 ) VALUES
 (
-    'Opening Keynote: The Future of Technology',
+    'Śniadanie IT Liderów',
     '2025-06-15 09:30:00',
     '2025-06-15 11:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Main Auditorium',
+    'ul. Łąkowa 29, 90-554 Łódź',
     NOW()
 ),
 (
-    'Workshop: Building Scalable Microservices',
+    'Microserwisy w Praktyce',
     '2025-06-15 11:30:00',
     '2025-06-15 13:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Workshop Room A',
+    'ul. Ogrodowa 16, 91-065 Łódź',
     NOW()
 ),
 (
-    'Panel Discussion: AI Ethics and Responsibility',
+    'Frontend: React i Vue',
     '2025-06-15 14:00:00',
     '2025-06-15 15:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Panel Room',
+    'ul. Ogrodowa 17, 91-065 Łódź',
     NOW()
 ),
 (
-    'Technical Deep Dive: Modern JavaScript Frameworks',
+    'AI i Big Data',
     '2025-06-16 09:00:00',
     '2025-06-16 12:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Technical Room B',
+    'ul. Targowa 1/3, 90-022 Łódź',
     NOW()
 ),
 (
-    'Networking Lunch',
+    'Wizualizacja Danych',
     '2025-06-16 12:30:00',
     '2025-06-16 14:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Dining Hall',
+    'ul. Targowa 1/3, 90-022 Łódź',
     NOW()
 ),
 (
-    'Workshop: Cloud Security Best Practices',
+    'Etyka AI',
     '2025-06-16 14:30:00',
     '2025-06-16 17:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Workshop Room C',
+    'Plac Dąbrowskiego 1, 90-249 Łódź',
     NOW()
 ),
 (
-    'Hackathon Kickoff',
+    'Tech Summit 2025',
     '2025-06-16 19:00:00',
     '2025-06-16 21:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Innovation Lab',
+    'al. Bandurskiego 7, 94-020 Łódź',
     NOW()
 ),
 (
-    'Career Fair',
+    'Warsztaty Dev',
     '2025-06-17 09:00:00',
     '2025-06-17 12:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Exhibition Hall',
+    'ul. Skorupki 21, 90-532 Łódź',
     NOW()
 ),
 (
-    'Closing Keynote: Industry Trends and Predictions',
+    'Networking i Startupy',
     '2025-06-17 16:00:00',
     '2025-06-17 17:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
-    'Main Auditorium',
+    'ul. Drewnowska 58, 91-002 Łódź',
     NOW()
 );
 
 
---2nd conference
-INSERT INTO CONFERENCE (id, name, start_date, end_date, description, last_update, location)
-VALUES
-  (
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'GameVerse Expo 2025',
-    '2025-06-01 10:00:00',
-    '2025-06-04 20:00:00',
-    'A dynamic and immersive gaming conference bringing together game developers, players, streamers, and industry experts. Dive into indie showcases, AAA game reveals, eSports tournaments, and the future of VR/AR gaming.',
-    NOW(),
-    'Hala Expo, Lodz, Poland'
-  ) RETURNING id;
-
--- events for the 2nd conference
-INSERT INTO EVENTS (id, conference_id, name, start_date, end_date, location, last_update)
-VALUES
-  (
-    'fd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Opening Ceremony & Keynote: The Future of Gaming',
-    '2025-06-01 10:00',
-    '2025-06-01 11:00',
-    'Main Stage',
-    NOW()
-  ),
-  
- (
-    'ad8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Indie Games Showcase',
-    '2025-06-01 11:30',
-    '2025-06-01 13:00',
-    'Indie Hall',
-    NOW()
-  ),
-
-  (
-    'bd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Networking Lunch',
-    '2025-06-01 13:00',
-    '2025-06-01 16:00',
-    'Café Area',
-    NOW()
-  ),
-
-  (
-    'cd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Workshop: Unity Game Development Basics',
-    '2025-06-02 10:00',
-    '2025-06-02 12:00',
-    'Workshop Room 2',
-    NOW()
-  ),
-
-   (
-    'dd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Talk: Monetization Strategies for Mobile Games',
-    '2025-06-02 12:30',
-    '2025-06-02 13:30',
-    'Room B2',
-    NOW()
-  ),
-
-(
-    'ed8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'eSports Showdown: League of Legends Finals',
-    '2025-06-03 11:00',
-    '2025-06-03 18:00',
-    'Arena Hall',
-    NOW()
-),
-
-(
-    'ab8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Closing Ceremony & Awards',
-    '2025-06-04 18:00',
-    '2025-06-04 20:00',
-    'Main Stage',
-    NOW()
-);
-
-
---bookmarks
-INSERT INTO BOOKMARKS (event_id,  user_id,  last_update,  is_active)
-VALUES
-(
- 'fd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ad8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ed8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
-  'ab8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-
-(
- 'fd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ad8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'bd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'cd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'dd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ed8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ab8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-);
 
 -- Down Migration
 

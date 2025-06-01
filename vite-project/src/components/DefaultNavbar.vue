@@ -1,5 +1,3 @@
-
-
 <template>
   <header class="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/10 border-b border-white/20 shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -10,7 +8,7 @@
       <nav class="flex items-center space-x-6">
         <RouterLink v-if="userRole === 'admin'" to="/AdminPanel"
           class="text-white hover:text-pink-200 transition" active-class="underline">
-          AdminPanel
+          Panel Administratora
         </RouterLink>
 
         <div class="relative inline-block">
@@ -30,6 +28,7 @@
       </router-link>
     </div>
         </div>
+                  
 
         <button v-if="isLoggedIn" @click="auth.logout()" class="text-white hover:text-red-300 transition">
           Wyloguj
@@ -54,6 +53,6 @@ const userName = computed(() => auth.user?.name ?? '')
 
 const showUserPanel = ref(false)
 const toggleUserPanel = () => {
-  showUserPanel.value = !showUserPanel.value
+    showUserPanel.value = !showUserPanel.value
 }
 </script>
