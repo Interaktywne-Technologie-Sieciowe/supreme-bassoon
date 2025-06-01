@@ -243,24 +243,24 @@ function isBookmarked(eventProps: any): boolean {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
-                            Calendar Guide
+                            Przewodnik po kalendarzu
                         </h3>
                         <ul class="space-y-3 text-gray-700">
                             <li class="flex items-center">
                                 <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
-                                <span>Click on any event to view details</span>
+                                <span>Kliknij na wydarzenie aby wyświetlić szczegóły</span>
                             </li>
                             <li class="flex items-center">
                                 <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
-                                <span>Use the arrows to navigate between months</span>
+                                <span>Użyj strzałek, aby poruszać się pomiędzy miesiącami</span>
                             </li>
                             <li class="flex items-center">
                                 <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
-                                <span>Switch between month and week views</span>
+                                <span>Przełączanie między widokiem miesięcznym i tygodniowym</span>
                             </li>
                             <li class="flex items-center">
                                 <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
-                                <span>Colors represent different conferences</span>
+                                <span>Kolory reprezentują różne konferencje</span>
                             </li>
                         </ul>
                     </div>
@@ -277,7 +277,7 @@ function isBookmarked(eventProps: any): boolean {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
-                            Calendar Stats
+                            Statystyki
                         </h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div
@@ -286,7 +286,7 @@ function isBookmarked(eventProps: any): boolean {
                                     class="absolute inset-0 bg-indigo-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300">
                                 </div>
                                 <p class="text-2xl font-bold text-indigo-600">{{ events.length }}</p>
-                                <p class="text-sm text-gray-500 font-medium">Total Events</p>
+                                <p class="text-sm text-gray-500 font-medium">ilość wydarzeń</p>
                             </div>
                             <div
                                 class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl text-center shadow-sm relative overflow-hidden group transition-all duration-300 hover:shadow-md">
@@ -294,7 +294,7 @@ function isBookmarked(eventProps: any): boolean {
                                     class="absolute inset-0 bg-indigo-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300">
                                 </div>
                                 <p class="text-2xl font-bold text-indigo-600">{{ getUniqueConferenceCount() }}</p>
-                                <p class="text-sm text-gray-500 font-medium">Conferences</p>
+                                <p class="text-sm text-gray-500 font-medium">ilość konferencji</p>
                             </div>
                         </div>
                     </div>
@@ -429,7 +429,7 @@ function isBookmarked(eventProps: any): boolean {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            Edit
+                            Edytuj
                         </button>
                         <button @click="handleDelete(selectedEvent.id)"
                             class="rounded-lg flex-1 bg-gradient-to-r from-red-600 to-red-500 text-white font-medium py-3 hover:from-red-700 hover:to-red-600 transition shadow-sm flex items-center justify-center">
@@ -438,7 +438,7 @@ function isBookmarked(eventProps: any): boolean {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
-                            Delete
+                            Usuń
                         </button>
                     </div>
 
