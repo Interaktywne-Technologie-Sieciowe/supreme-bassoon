@@ -25,18 +25,18 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
+        return res.status(400).json({ error: "Email i hasło są wymagane" });
     }
 
     try {
         const user = await userModel.findByEmail(email);
         if (!user) {
-            return res.status(401).json({ error: "Invalid email or password" });
+            return res.status(401).json({ error: "Niepoprawny email lub hasło" });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(401).json({ error: "Invalid email or password" });
+            return res.status(401).json({ error: "Niepoprawny email lub hasło" });
         }
 
         const role = await userModel.getRoleById(user.role_id);
@@ -98,7 +98,7 @@ exports.resetPassword = async (req, res) => {
 
         await markTokenUsed(token);
 
-        res.json({ message: "Password changed successfully." });
+        res.json({ message: "Pomyślnie zmieniono hasło" });
     } catch (err) {
         return res.status(401).json({ error: "Invalid or expired token." });
     }
@@ -149,19 +149,19 @@ exports.refreshLogin = async (req, res) => {
 exports.changePassword = async (req, res) => {
     const { userMail, newPassword } = req.body;
     if (!userMail || !newPassword) {
-        return res.status(400).json({ error: "Missing email or new password." });
+        return res.status(400).json({ error: "Brak email lub hasła." });
     }
 try{
     const user = await userModel.findByEmail(userMail);
     if (!user) {
-        return res.status(404).json({ error: "User does not exist." });
+        return res.status(404).json({ error: "Użytkownik nie istanieje" });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await userModel.updatePasswordByEmail(userMail, hashedPassword);
 
 
-    res.json({ message: "Password changed successfully." });
+    res.json({ message: "Hasło zotało zmienione." });
 } catch (err) {
     return res.status(401).json({ error: "error password change from user panel." });
 }
@@ -171,12 +171,12 @@ try{
 exports.changeEmail = async (req, res) => {
     const { userMail, newEmail } = req.body;
     if (!userMail || !newEmail) {
-        return res.status(400).json({ error: "Missing email or new email." });
+        return res.status(400).json({ error: "Brak email lub hasła." });
     }
 try{
     const user = await userModel.findByEmail(userMail);
     if (!user) {
-        return res.status(404).json({ error: "User does not exist." });
+        return res.status(404).json({ error: "Użytkownik nie istanieje." });
     }
 
     await userModel.updateEmailByEmail(userMail, newEmail);

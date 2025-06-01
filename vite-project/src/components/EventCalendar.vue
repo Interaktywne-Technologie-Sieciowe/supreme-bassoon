@@ -351,7 +351,7 @@ function isBookmarked(eventProps: any): boolean {
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <div>
-                                        <span class="font-medium">Start:</span>
+                                        <span class="font-medium">Data rozpoczęcia:</span>
                                         <span class="ml-2">{{ formatDateTime(selectedEvent.startStr) }}</span>
                                     </div>
                                 </div>
@@ -362,7 +362,7 @@ function isBookmarked(eventProps: any): boolean {
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <div>
-                                        <span class="font-medium">End:</span>
+                                        <span class="font-medium">Data zakończenia:</span>
                                         <span class="ml-2">{{ formatDateTime(selectedEvent.endStr) }}</span>
                                     </div>
                                 </div>
@@ -375,7 +375,7 @@ function isBookmarked(eventProps: any): boolean {
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                     <div>
-                                        <span class="font-medium">Location:</span>
+                                        <span class="font-medium">Lokalizacja:</span>
                                         <span class="ml-2">{{ selectedEvent.extendedProps.location }}</span>
                                     </div>
                                 </div>
