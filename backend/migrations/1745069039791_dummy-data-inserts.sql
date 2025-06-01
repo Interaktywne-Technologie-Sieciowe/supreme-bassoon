@@ -63,7 +63,7 @@ INSERT INTO EVENTS (
     last_update
 ) VALUES
 (
-    'DoubleTree by Hilton Łódź',
+    'Śniadanie IT Liderów',
     '2025-06-15 09:30:00',
     '2025-06-15 11:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -71,7 +71,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'PURO Łódź Centrum',
+    'Microserwisy w Praktyce',
     '2025-06-15 11:30:00',
     '2025-06-15 13:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -79,7 +79,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Vienna House by Wyndham Andel’s Łódź',
+    'Frontend: React i Vue',
     '2025-06-15 14:00:00',
     '2025-06-15 15:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -87,7 +87,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'EC1 Łódź – Centrum Nauki i Techniki',
+    'AI i Big Data',
     '2025-06-16 09:00:00',
     '2025-06-16 12:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -95,7 +95,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Narodowe Centrum Kultury Filmowej',
+    'Wizualizacja Danych',
     '2025-06-16 12:30:00',
     '2025-06-16 14:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -103,7 +103,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Teatr Wielki w Łodzi',
+    'Etyka AI',
     '2025-06-16 14:30:00',
     '2025-06-16 17:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -111,7 +111,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Atlas Arena',
+    'Tech Summit 2025',
     '2025-06-16 19:00:00',
     '2025-06-16 21:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -119,7 +119,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Hala MOSiR',
+    'Warsztaty Dev',
     '2025-06-17 09:00:00',
     '2025-06-17 12:00:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -127,7 +127,7 @@ INSERT INTO EVENTS (
     NOW()
 ),
 (
-    'Manufaktura',
+    'Networking i Startupy',
     '2025-06-17 16:00:00',
     '2025-06-17 17:30:00',
     'b9c55818-4bbd-4a80-a2fb-9e6cfe922bab',
@@ -136,163 +136,6 @@ INSERT INTO EVENTS (
 );
 
 
---2nd conference
-INSERT INTO CONFERENCE (id, name, start_date, end_date, description, last_update, location)
-VALUES
-  (
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    '',
-    '2025-06-01 10:00:00',
-    '2025-06-04 20:00:00',
-    'Festiwal gier i technologii – spotkania z twórcami, turnieje e-sportowe, prezentacje gier niezależnych i nowości VR/AR w sercu Łodzi.',
-    NOW(),
-    'Plac Wolności, 91-415 Łódź'
-  ) RETURNING id;
-
--- events for the 2nd conference
-INSERT INTO EVENTS (id, conference_id, name, start_date, end_date, location, last_update)
-VALUES
-  (
-    'fd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Vienna House by Wyndham Andel’s Łódź',
-    '2025-06-01 10:00',
-    '2025-06-01 11:00',
-    'ul. Ogrodowa 17, 91-065 Łódź',
-    NOW()
-  ),
-  
- (
-    'ad8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'PURO Łódź Centrum',
-    '2025-06-01 11:30',
-    '2025-06-01 13:00',
-    'ul. Ogrodowa 16, 91-065 Łódź',
-    NOW()
-  ),
-
-  (
-    'bd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Hotel Ambasador Premium',
-    '2025-06-01 13:00',
-    '2025-06-01 16:00',
-    'ul. Kilińskiego 145, 90-315 Łódź',
-    NOW()
-  ),
-
-  (
-    'cd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Scena Monopolis',
-    '2025-06-02 10:00',
-    '2025-06-02 12:00',
-    'ul. Kopcińskiego 62, 90-032 Łódź',
-    NOW()
-  ),
-
-   (
-    'dd8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Fabryka Sztuki',
-    '2025-06-02 12:30',
-    '2025-06-02 13:30',
-    'ul. Tymienieckiego 3, 90-365 Łódź',
-    NOW()
-  ),
-
-(
-    'ed8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Muzeum Fabryki',
-    '2025-06-03 11:00',
-    '2025-06-03 18:00',
-    'ul. Drewnowska 58, 91-002 Łódź',
-    NOW()
-),
-
-(
-    'ab8a8522-773c-4dcb-b434-24f955917452',
-    'd947b8c2-8a01-4788-a850-4334428c85a0',
-    'Zatoka Sportu Politechniki Łódzkiej',
-    '2025-06-04 18:00',
-    '2025-06-04 20:00',
-    'al. Politechniki 10, 93-590 Łódź',
-    NOW()
-);
-
-
---bookmarks
-INSERT INTO BOOKMARKS (event_id,  user_id,  last_update,  is_active)
-VALUES
-(
- 'fd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ad8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ed8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
-  'ab8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-333c-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-
-(
- 'fd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ad8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'bd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'cd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'dd8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ed8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-),
-(
- 'ab8a8522-773c-4dcb-b434-24f955917452',
- 'fd8a8522-222b-4dcb-b434-24f955917452',
- NOW(),
-TRUE
-);
 
 -- Down Migration
 
