@@ -53,12 +53,12 @@ exports.createUser = async (req, res) => {
         await createResetToken(newUser.id, token);
 
         const resetLink = `http://localhost:5173/PasswordChange?token=${token}`;
-        const subj = 'Welcome to MeetMe!';
+        const subj = 'Witaj w MeetMe!';
         const mailBody = `
-            <p>Hi ${firstName}!</p>
-            <p>Your MeetMe account has been created.</p>
-            <p><strong>You need to set your password! </strong></p>
-            <p>Click the button below to do so:</p>
+            <p>Cześć ${firstName}!</p>
+            <p>Twoje konto MeetMe zostało utworzone.</p>
+            <p><strong>Musisz ustawić swoje hasło!</strong></p>
+            <p>Kliknij przycisk poniżej, aby to zrobić:</p>
             <p>
                 <a href="${resetLink}" style="
                     background-color: #007BFF;
@@ -68,7 +68,7 @@ exports.createUser = async (req, res) => {
                     border-radius: 5px;
                     display: inline-block;
                 ">
-                    Change Password
+                    Zmień hasło
                 </a>
             </p>
         `;

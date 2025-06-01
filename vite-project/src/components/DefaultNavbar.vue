@@ -20,13 +20,15 @@
             Witaj, {{ userName }}!
           </span>
 
-          <div v-show="showUserPanel"
-               class="absolute bg-white text-black mt-2 right-0 shadow-md rounded w-40 z-50 transition-all duration-300">
-            <router-link to="/UserPanel" class="block px-4 py-2 hover:bg-gray-200 hover:rounded text-black select-none" style="text-decoration: none;"  
-             @click="showUserPanel = false">
-              Panel użytkownika
-            </router-link>
-          </div>
+              <div v-if="userRole === 'user' && showUserPanel"
+        class="absolute bg-white text-black mt-2 right-0 shadow-md rounded w-40 z-50 transition-all duration-300">
+      <router-link to="/UserPanel"
+                  class="block px-4 py-2 hover:bg-gray-200 hover:rounded text-black select-none"
+                  style="text-decoration: none;"
+                  @click="showUserPanel = false">
+        Panel użytkownika
+      </router-link>
+    </div>
         </div>
 
         <button v-if="isLoggedIn" @click="auth.logout()" class="text-white hover:text-red-300 transition">
